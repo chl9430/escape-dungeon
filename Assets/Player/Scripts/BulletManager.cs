@@ -35,7 +35,8 @@ public class BulletManager : MonoBehaviour
 
     void DestroyBullet()
     {
-        Destroy(gameObject);
+        // Destroy(gameObject);
+        gameObject.SetActive(false);
         destroyTime = 3;
     }
 

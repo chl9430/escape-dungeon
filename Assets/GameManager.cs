@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         bulletText.text = currentBullet + " / " + maxBullet;
     }
 
-    public void Shooting(Vector3 targetPosition)
+    public void Shooting(Vector3 targetPosition, Enemy enemy)
     {
         currentShootDelay += Time.deltaTime;
 
@@ -50,24 +50,52 @@ public class GameManager : MonoBehaviour
         currentBullet -= 1;
         currentShootDelay = 0f;
 
-        Instantiate(weaponFlashFX, bulletPoint);
-        Instantiate(bulletCaseFX, bulletCasePoint);
-
         Vector3 aim = (targetPosition - bulletPoint.position).normalized;
 
+        // Instantiate(weaponFlashFX, bulletPoint);
+        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
+        GameObject flashFX = PoolManager.instance.ActiveObj(1);
+        SetObjPosition(flashFX, bulletPoint);
+        flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
+
+        // Instantiate(bulletCaseFX, bulletCasePoint);
+        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
+        GameObject caseFX = PoolManager.instance.ActiveObj(2);
+        SetObjPosition(caseFX, bulletCasePoint);
+
         // 목표물의 방향으로 총알을 회전키신다.
-        Instantiate(bulletObj, bulletPoint.position, Quaternion.LookRotation(aim, Vector3.up));
+        // Instantiate(bulletObj, bulletPoint.position, Quaternion.LookRotation(aim, Vector3.up));
+
+        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총알이 있는지 확인한다.
+        GameObject prefabToSpawn = PoolManager.instance.ActiveObj(0);
+        SetObjPosition(prefabToSpawn, bulletPoint);
+        prefabToSpawn.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
+
+        // 레이캐스트의 충돌
+        //if (enemy != null && enemy.enemyCurrentHP > 0)
+        //{
+        //    enemy.enemyCurrentHP -= 1;
+        //}
     }
 
     // 탄창이 바뀌고 탄창이 채워지는 함수
     public void ReloadClip()
     {
-        Instantiate(weaponClipFX, weaponClipPoint);
+        // Instantiate(weaponClipFX, weaponClipPoint);
+        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
+        GameObject clipFX = PoolManager.instance.ActiveObj(3);
+        SetObjPosition(clipFX, weaponClipPoint);
+
         InitBullet();
     }
 
     void InitBullet()
     {
         currentBullet = maxBullet;
+    }
+
+    void SetObjPosition(GameObject obj, Transform targetTransform)
+    {
+        obj.transform.position = targetTransform.position;
     }
 }

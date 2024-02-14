@@ -22,6 +22,8 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Rig handRig;
     [SerializeField] Rig aimRig;
 
+    Enemy enemy;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,6 +80,8 @@ public class PlayerManager : MonoBehaviour
             {
                 targetPosition = hit.point;
                 aimObj.transform.position = hit.point;
+
+                enemy = hit.collider.gameObject.GetComponent<Enemy>();
             }
             else
             {
@@ -99,7 +103,7 @@ public class PlayerManager : MonoBehaviour
             if (input.shoot)
             {
                 anim.SetBool("Shoot", true);
-                GameManager.instance.Shooting(targetPosition);
+                GameManager.instance.Shooting(targetPosition, enemy);
             }
             else
             {
