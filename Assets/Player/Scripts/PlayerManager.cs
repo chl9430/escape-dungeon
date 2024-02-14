@@ -38,6 +38,7 @@ public class PlayerManager : MonoBehaviour
 
     void AimCheck()
     {
+        // 등록된 reload 버튼을 눌렀을 때
         if (input.reload)
         {
             input.reload = false;
@@ -54,12 +55,13 @@ public class PlayerManager : MonoBehaviour
             controller.isReload = true;
         }
 
+        // 재장전 상태라면 조준을 할 수 없게 한다.
         if (controller.isReload)
         {
             return;
         }
 
-        // 조준 상태
+        // 등록된 aim 버튼을 눌렀을 때
         if (input.aim)
         {
             // 에임 카메라로 전환
@@ -93,9 +95,11 @@ public class PlayerManager : MonoBehaviour
 
             SetRigWeight(1);
 
+            // 등록된 shoot 버튼을 눌렀을 때
             if (input.shoot)
             {
                 anim.SetBool("Shoot", true);
+                GameManager.instance.Shooting(targetPosition);
             }
             else
             {
@@ -118,6 +122,7 @@ public class PlayerManager : MonoBehaviour
         controller.isAimMove = isCheck;
     }
 
+    // 재장전 상태를 해제하는 함수(재장전 애니메이션의 끝 부분에 호출된다.)
     public void Reload()
     {
         controller.isReload = false;
@@ -129,5 +134,10 @@ public class PlayerManager : MonoBehaviour
     {
         aimRig.weight = weight;
         handRig.weight = weight;
+    }
+
+    public void ReloadWeaponClip()
+    {
+        GameManager.instance.ReloadClip();
     }
 }
