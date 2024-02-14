@@ -122,6 +122,9 @@ namespace StarterAssets
             }
         }
 
+        public bool isAimMove = false;
+        public bool isReload = false;
+
 
         private void Awake()
         {
@@ -216,6 +219,12 @@ namespace StarterAssets
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
+            // 조준 상태일때 플레이어의 걷는 속도를 일반속도로 설정
+            if (isAimMove || isReload)
+            {
+                targetSpeed = MoveSpeed;
+            }
+
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
@@ -261,7 +270,12 @@ namespace StarterAssets
                     RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+
+                // 조준 상태가 아닐때만 플레이어를 회전시킨다.
+                if (!isAimMove)
+                {
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
             }
 
 
