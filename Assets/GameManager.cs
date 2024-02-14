@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -23,6 +24,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform weaponClipPoint;
     [SerializeField] GameObject weaponClipFX;
 
+    [Header("Enemy")]
+    [SerializeField] GameObject[] spawnPoint;
+
+    [Header("BGM")]
+    [SerializeField] AudioClip bgmSound;
+    AudioSource BGM;
+
+    PlayableDirector cut;
+    public bool isReady = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +41,10 @@ public class GameManager : MonoBehaviour
         instance = this;
 
         currentShootDelay = 0f;
+
+        // 게임 시작 시, 컷신을 바로 플레이
+        cut = GetComponent<PlayableDirector>();
+        cut.Play();
 
         InitBullet();
     }
@@ -68,7 +83,6 @@ public class GameManager : MonoBehaviour
 
         // 목표물의 방향으로 총알을 회전키신다.
         // Instantiate(bulletObj, bulletPoint.position, Quaternion.LookRotation(aim, Vector3.up));
-
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총알이 있는지 확인한다.
         GameObject prefabToSpawn = PoolManager.instance.ActiveObj(0);
         SetObjPosition(prefabToSpawn, bulletPoint);
@@ -100,5 +114,36 @@ public class GameManager : MonoBehaviour
     void SetObjPosition(GameObject obj, Transform targetTransform)
     {
         obj.transform.position = targetTransform.position;
+    }
+
+    IEnumerator EnemySpawn()
+    {
+        // Instantiate(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position, Quaternion.identity);
+        if (PoolManager.instance != null)
+        {
+            GameObject enemy = PoolManager.instance.ActiveObj(4);
+            SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        // 2초 뒤에 해당 함수를 재귀호출한다.
+        StartCoroutine(EnemySpawn());
+    }
+
+    void PlayBGMSound()
+    {
+        BGM = GetComponent<AudioSource>();
+        BGM.clip = bgmSound;
+        BGM.loop = true;
+        BGM.Play();
+    }
+
+    // 컷신이 끝나고 호출 될 함수. 게임 매니저의 타임라인 끝부분에 리시버를 통해 호출된다.
+    public void StartGame()
+    {
+        isReady = false;
+        PlayBGMSound();
+        StartCoroutine(EnemySpawn());
     }
 }

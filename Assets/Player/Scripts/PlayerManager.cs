@@ -41,6 +41,14 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 컷신이 실행중일 경우
+        if (GameManager.instance.isReady)
+        {
+            AimControll(false);
+            SetRigWeight(0);
+            return;
+        }
+
         AimCheck();
     }
 
