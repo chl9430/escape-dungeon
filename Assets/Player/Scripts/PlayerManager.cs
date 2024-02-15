@@ -3,7 +3,6 @@ using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -16,11 +15,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] GameObject aimImage;
     [SerializeField] GameObject aimObj;
     [SerializeField] float aimObjDis = 10f;
+    [SerializeField] float maxShootDelay = 1f;
+    [SerializeField] float currentShootDelay = 0;
     [SerializeField] LayerMask targetLayer;
-
-    [Header("IK")]
-    [SerializeField] Rig handRig;
-    [SerializeField] Rig aimRig;
 
     [Header("Weapon Sound Effect")]
     [SerializeField] AudioClip shootingSound;
@@ -32,6 +29,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentShootDelay = 0f;
         input = GetComponent<StarterAssetsInputs>();
         controller = GetComponent<ThirdPersonController>();
         anim = GetComponent<Animator>();
@@ -45,7 +43,6 @@ public class PlayerManager : MonoBehaviour
         if (GameManager.instance.isReady)
         {
             AimControll(false);
-            SetRigWeight(0);
             return;
         }
 
@@ -65,7 +62,6 @@ public class PlayerManager : MonoBehaviour
             }
 
             AimControll(false);
-            SetRigWeight(0);
             anim.SetLayerWeight(1, 1);
             anim.SetTrigger("Reload");
             controller.isReload = true;
@@ -111,23 +107,47 @@ public class PlayerManager : MonoBehaviour
             // 플레이어의 전방을 항상 타겟으로 고정시킨다.
             transform.forward = Vector3.Lerp(transform.forward, aimDir, Time.deltaTime * 50f);
 
-            SetRigWeight(1);
-
             // 등록된 shoot 버튼을 눌렀을 때
             if (input.shoot)
             {
-                anim.SetBool("Shoot", true);
-                GameManager.instance.Shooting(targetPosition, enemy, weaponSound, shootingSound);
+                if (currentShootDelay == 0)
+                {
+                    currentShootDelay += Time.deltaTime;
+
+                    anim.SetBool("Shoot", true);
+
+                    GameManager.instance.Shooting(targetPosition, enemy, weaponSound, shootingSound);
+                }
+                else
+                {
+                    anim.SetBool("Shoot", false);
+
+                    currentShootDelay += Time.deltaTime;
+
+                    if (currentShootDelay > maxShootDelay)
+                    {
+                        currentShootDelay = 0;
+                    }
+                }
             }
             else
             {
                 anim.SetBool("Shoot", false);
+
+                if (currentShootDelay != 0)
+                {
+                    currentShootDelay += Time.deltaTime;
+
+                    if (currentShootDelay > maxShootDelay)
+                    {
+                        currentShootDelay = 0;
+                    }
+                }
             }
         }
         else
         {
             AimControll(false);
-            SetRigWeight(0);
             anim.SetLayerWeight(1, 0);
             anim.SetBool("Shoot", false);
         }
@@ -144,15 +164,8 @@ public class PlayerManager : MonoBehaviour
     public void Reload()
     {
         controller.isReload = false;
-        SetRigWeight(1);
         anim.SetLayerWeight(1, 0);
         PlayWeaponSound(reloadSound[2]);
-    }
-
-    void SetRigWeight(float weight)
-    {
-        aimRig.weight = weight;
-        handRig.weight = weight;
     }
 
     public void ReloadWeaponClip()

@@ -10,9 +10,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Bullet")]
     [SerializeField] Transform bulletPoint;
-    [SerializeField] GameObject bulletObj;
-    [SerializeField] float maxShootDelay = 0.2f;
-    [SerializeField] float currentShootDelay = 0.2f;
     [SerializeField] Text bulletText;
     int maxBullet = 30;
     int currentBullet = 0;
@@ -40,7 +37,7 @@ public class GameManager : MonoBehaviour
         // 어디서든 접근 가능한 정적 변수
         instance = this;
 
-        currentShootDelay = 0f;
+        // currentShootDelay = 0f;
 
         // 게임 시작 시, 컷신을 바로 플레이
         cut = GetComponent<PlayableDirector>();
@@ -57,50 +54,37 @@ public class GameManager : MonoBehaviour
 
     public void Shooting(Vector3 targetPosition, Enemy enemy, AudioSource weaponSound, AudioClip shootingSound)
     {
-        currentShootDelay += Time.deltaTime;
-
-        if (currentShootDelay < maxShootDelay || currentBullet <= 0)
+        if (currentBullet <= 0)
             return;
 
         currentBullet -= 1;
-        currentShootDelay = 0f;
 
         weaponSound.clip = shootingSound;
         weaponSound.Play();
 
         Vector3 aim = (targetPosition - bulletPoint.position).normalized;
 
-        // Instantiate(weaponFlashFX, bulletPoint);
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
-        GameObject flashFX = PoolManager.instance.ActiveObj(1);
+        GameObject flashFX = PoolManager.instance.ActiveObj(0);
         SetObjPosition(flashFX, bulletPoint);
         flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
 
-        // Instantiate(bulletCaseFX, bulletCasePoint);
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
-        GameObject caseFX = PoolManager.instance.ActiveObj(2);
+        GameObject caseFX = PoolManager.instance.ActiveObj(1);
         SetObjPosition(caseFX, bulletCasePoint);
 
-        // 목표물의 방향으로 총알을 회전키신다.
-        // Instantiate(bulletObj, bulletPoint.position, Quaternion.LookRotation(aim, Vector3.up));
-        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총알이 있는지 확인한다.
-        GameObject prefabToSpawn = PoolManager.instance.ActiveObj(0);
-        SetObjPosition(prefabToSpawn, bulletPoint);
-        prefabToSpawn.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
-
         // 레이캐스트의 충돌
-        //if (enemy != null && enemy.enemyCurrentHP > 0)
-        //{
-        //    enemy.enemyCurrentHP -= 1;
-        //}
+        if (enemy != null && enemy.enemyCurrentHP > 0)
+        {
+            enemy.enemyCurrentHP -= 1;
+        }
     }
 
     // 탄창이 바뀌고 탄창이 채워지는 함수
     public void ReloadClip()
     {
-        // Instantiate(weaponClipFX, weaponClipPoint);
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
-        GameObject clipFX = PoolManager.instance.ActiveObj(3);
+        GameObject clipFX = PoolManager.instance.ActiveObj(2);
         SetObjPosition(clipFX, weaponClipPoint);
 
         InitBullet();
@@ -118,10 +102,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator EnemySpawn()
     {
-        // Instantiate(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position, Quaternion.identity);
         if (PoolManager.instance != null)
         {
-            GameObject enemy = PoolManager.instance.ActiveObj(4);
+            GameObject enemy = PoolManager.instance.ActiveObj(3);
             SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
         }
 
@@ -144,6 +127,8 @@ public class GameManager : MonoBehaviour
     {
         isReady = false;
         PlayBGMSound();
-        StartCoroutine(EnemySpawn());
+        GameObject enemy = PoolManager.instance.ActiveObj(3);
+        SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
+        // StartCoroutine(EnemySpawn());
     }
 }
