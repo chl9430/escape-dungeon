@@ -28,8 +28,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] AudioClip bgmSound;
     AudioSource BGM;
 
+    [Header("Guide")]
+    [SerializeField] GameObject guideObj;
+
     PlayableDirector cut;
-    public bool isReady = true;
+    public bool isWatching = false;
+    public bool canPlayerMove = false;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +53,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isWatching || TalkManager.instance.isTalking)
+        {
+            canPlayerMove = false;
+        }
+        else
+        {
+            canPlayerMove = true;
+        }
+
         bulletText.text = currentBullet + " / " + maxBullet;
     }
 
@@ -125,10 +138,21 @@ public class GameManager : MonoBehaviour
     // 컷신이 끝나고 호출 될 함수. 게임 매니저의 타임라인 끝부분에 리시버를 통해 호출된다.
     public void StartGame()
     {
-        isReady = false;
+        isWatching = false;
         PlayBGMSound();
         GameObject enemy = PoolManager.instance.ActiveObj(3);
         SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
         // StartCoroutine(EnemySpawn());
+    }
+
+    public void ShowGuide(string guideText)
+    {
+        guideObj.transform.GetComponentInChildren<Text>().text = guideText;
+        guideObj.SetActive(true);
+    }
+
+    public void HideGuide()
+    {
+        guideObj.SetActive(false);
     }
 }

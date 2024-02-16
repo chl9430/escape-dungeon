@@ -2,14 +2,11 @@ using Cinemachine;
 using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    StarterAssetsInputs input;
-    ThirdPersonController controller;
-    Animator anim;
-
     [Header("Aim")]
     [SerializeField] CinemachineVirtualCamera aimCam;
     [SerializeField] GameObject aimImage;
@@ -25,6 +22,10 @@ public class PlayerManager : MonoBehaviour
     AudioSource weaponSound;
 
     Enemy enemy;
+    StarterAssetsInputs input;
+    ThirdPersonController controller;
+    Animator anim;
+    GameObject npc;
 
     // Start is called before the first frame update
     void Start()
@@ -39,14 +40,29 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Talk();
+
         // 컷신이 실행중일 경우
-        if (GameManager.instance.isReady)
+        if (!GameManager.instance.canPlayerMove)
         {
             AimControll(false);
             return;
         }
 
         AimCheck();
+    }
+
+    void Talk()
+    {
+        if (input.talk)
+        {
+            input.talk = false;
+
+            if (npc != null)
+            {
+                TalkManager.instance.Talk(npc);
+            }
+        }
     }
 
     void AimCheck()
@@ -183,5 +199,22 @@ public class PlayerManager : MonoBehaviour
     {
         weaponSound.clip = sound;
         weaponSound.Play();
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("NPC"))
+        {
+            GameManager.instance.ShowGuide("NPC와 대화하려면 T버튼을 누르십시오.");
+            npc = other.gameObject;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("NPC"))
+        {
+            GameManager.instance.HideGuide();
+            npc = null;
+        }
     }
 }

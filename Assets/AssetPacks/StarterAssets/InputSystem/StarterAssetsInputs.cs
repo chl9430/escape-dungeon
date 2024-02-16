@@ -1,6 +1,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 #endif
 
 namespace StarterAssets
@@ -15,6 +16,7 @@ namespace StarterAssets
 		public bool aim;
 		public bool shoot;
 		public bool reload;
+		public bool talk;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -39,7 +41,10 @@ namespace StarterAssets
 
 		public void OnJump(InputValue value)
 		{
-			JumpInput(value.isPressed);
+			if (GameManager.instance.canPlayerMove)
+			{
+				JumpInput(value.isPressed);
+			}
 		}
 
 		public void OnSprint(InputValue value)
@@ -59,7 +64,18 @@ namespace StarterAssets
 
         public void OnReload(InputValue value)
         {
-            ReloadInput(value.isPressed);
+			if (GameManager.instance.canPlayerMove)
+			{
+                ReloadInput(value.isPressed);
+            }
+        }
+
+        public void OnTalk(InputValue value)
+        {
+			if (!GameManager.instance.isWatching)
+			{
+                TalkInput(value.isPressed);
+            }
         }
 #endif
 
@@ -99,6 +115,11 @@ namespace StarterAssets
             reload = newReloadState;
         }
 
+        public void TalkInput(bool newReloadState)
+        {
+            talk = newReloadState;
+        }
+
         private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
@@ -109,5 +130,5 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 	}
-	
+
 }

@@ -157,7 +157,8 @@ namespace StarterAssets
 
         private void Update()
         {
-            if (GameManager.instance.isReady)
+            // 플레이어가 움직일 수 없는 상태라면 Update함수는 실행되지 않는다.
+            if (!GameManager.instance.canPlayerMove)
             {
                 return;
             }
