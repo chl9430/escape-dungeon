@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -21,6 +22,13 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] AudioClip[] reloadSound;
     AudioSource weaponSound;
 
+    [Header("Inventory")]
+    [SerializeField] GameObject inventory;
+    List<GameObject> items;
+    public List<GameObject> ItemList { 
+        get { return items; }
+    }
+
     Enemy enemy;
     StarterAssetsInputs input;
     ThirdPersonController controller;
@@ -30,6 +38,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        items = new List<GameObject>();
         currentShootDelay = 0f;
         input = GetComponent<StarterAssetsInputs>();
         controller = GetComponent<ThirdPersonController>();
@@ -41,6 +50,7 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         Talk();
+        ShowInventory();
 
         // 컷신이 실행중일 경우
         if (!GameManager.instance.canPlayerMove)
@@ -50,6 +60,28 @@ public class PlayerManager : MonoBehaviour
         }
 
         AimCheck();
+    }
+
+    public void AddItem(GameObject item)
+    {
+        items.Add(item);
+    }
+
+    void ShowInventory()
+    {
+        if (input.showInventory)
+        {
+            input.showInventory = false;
+
+            if (inventory.activeInHierarchy == false)
+            {
+                inventory.SetActive(true);
+            }
+            else
+            {
+                inventory.SetActive(false);
+            }
+        }
     }
 
     void Talk()

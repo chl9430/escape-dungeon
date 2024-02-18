@@ -15,7 +15,8 @@ public class NPC : MonoBehaviour
     [SerializeField] int id;
     [SerializeField] int currentQuest = 0;
     [SerializeField] List<bool> successList;
-    public NPCQuestState npcQuestState;
+
+    NPCQuestState npcQuestState;
 
     public int ID {  get { return id; } }
     public int CurrentQuest { get { return currentQuest; } }

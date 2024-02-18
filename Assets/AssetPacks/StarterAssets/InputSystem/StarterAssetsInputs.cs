@@ -17,6 +17,7 @@ namespace StarterAssets
 		public bool shoot;
 		public bool reload;
 		public bool talk;
+		public bool showInventory;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -77,6 +78,14 @@ namespace StarterAssets
                 TalkInput(value.isPressed);
             }
         }
+
+        public void OnShowInventory(InputValue value)
+        {
+            if (GameManager.instance.canPlayerMove)
+            {
+                ShowInventoryInput(value.isPressed);
+            }
+        }
 #endif
 
 
@@ -115,10 +124,15 @@ namespace StarterAssets
             reload = newReloadState;
         }
 
-        public void TalkInput(bool newReloadState)
+        public void TalkInput(bool newTalkState)
         {
-            talk = newReloadState;
+            talk = newTalkState;
         }
+		
+		public void ShowInventoryInput(bool newShowInventoryState)
+		{
+			showInventory = newShowInventoryState;
+		}
 
         private void OnApplicationFocus(bool hasFocus)
 		{
