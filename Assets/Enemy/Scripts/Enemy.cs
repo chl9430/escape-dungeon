@@ -8,20 +8,27 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] Slider HPBar;
 
-    float enemyMaxHP = 10;
-    public float enemyCurrentHP = 0;
+    [SerializeField] string monName = "";
+    [SerializeField] float enemyMaxHP = 5;
+
+    QuestManager questManager;
+    GameObject targetPlayer;
 
     NavMeshAgent agent;
     Animator animator;
-
-    GameObject targetPlayer;
-    float targetDelay = 0.5f;
-
     CapsuleCollider enemyCollider;
+
+    float enemyCurrentHP = 0;
+    float targetDelay = 0.5f;
+    bool isDead = false;
+
+    public float EnemyCurrentHP { get { return enemyCurrentHP; } }
 
     // Start is called before the first frame update
     void Start()
     {
+        questManager = FindObjectOfType<QuestManager>();
+
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
@@ -34,10 +41,17 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         HPBar.value = enemyCurrentHP / enemyMaxHP;
 
         if (enemyCurrentHP <= 0)
         {
+            isDead = true;
+            questManager.CheckDeadMonName(monName);
             // 죽는 애니메이션이 끝난 후 적을 삭제하기 위해 코루틴 사용
             StartCoroutine(EnemyDie());
             return;
@@ -91,5 +105,11 @@ public class Enemy : MonoBehaviour
         InitEnemyHP();
         agent.speed = 1;
         enemyCollider.enabled = true;
+        isDead = false;
+    }
+
+    public void GetDamaged(int damage)
+    {
+        enemyCurrentHP -= damage;
     }
 }

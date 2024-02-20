@@ -1,10 +1,7 @@
 using Cinemachine;
 using StarterAssets;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -24,6 +21,12 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
+
+    [Header("Quest")]
+    public int currentQuest;
+
+    public int CurrentQuest { get { return currentQuest; } }
+
     List<GameObject> items;
     public List<GameObject> ItemList { 
         get { return items; }
@@ -33,7 +36,9 @@ public class PlayerManager : MonoBehaviour
     StarterAssetsInputs input;
     ThirdPersonController controller;
     Animator anim;
-    GameObject npc;
+    GameObject scanedNPCObj;
+
+    public GameObject ScanedNPCObj { get { return scanedNPCObj; } }
 
     // Start is called before the first frame update
     void Start()
@@ -90,9 +95,9 @@ public class PlayerManager : MonoBehaviour
         {
             input.talk = false;
 
-            if (npc != null)
+            if (scanedNPCObj != null)
             {
-                TalkManager.instance.Talk(npc);
+                TalkManager.instance.Talk(scanedNPCObj);
             }
         }
     }
@@ -232,12 +237,18 @@ public class PlayerManager : MonoBehaviour
         weaponSound.clip = sound;
         weaponSound.Play();
     }
+
+    public void SetCurrentQuest(int questKey)
+    {
+        currentQuest = questKey;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("NPC"))
         {
             GameManager.instance.ShowGuide("NPC와 대화하려면 T버튼을 누르십시오.");
-            npc = other.gameObject;
+            scanedNPCObj = other.gameObject;
         }
     }
 
@@ -246,7 +257,7 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.CompareTag("NPC"))
         {
             GameManager.instance.HideGuide();
-            npc = null;
+            scanedNPCObj = null;
         }
     }
 }

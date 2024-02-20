@@ -7,8 +7,10 @@ public class PoolManager : MonoBehaviour
     public static PoolManager instance;
 
     [SerializeField] GameObject[] prefabs;
-    int poolSize = 1;
+
     List<GameObject>[] objPools;
+    
+    int poolSize = 1;
 
     // Start is called before the first frame update
     void Start()

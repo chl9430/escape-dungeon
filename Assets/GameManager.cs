@@ -44,10 +44,14 @@ public class GameManager : MonoBehaviour
         // currentShootDelay = 0f;
 
         // 게임 시작 시, 컷신을 바로 플레이
-        cut = GetComponent<PlayableDirector>();
-        cut.Play();
+        //cut = GetComponent<PlayableDirector>();
+        //cut.Play();
+
+        
 
         InitBullet();
+
+        StartCoroutine(EnemySpawn());
     }
 
     // Update is called once per frame
@@ -87,9 +91,9 @@ public class GameManager : MonoBehaviour
         SetObjPosition(caseFX, bulletCasePoint);
 
         // 레이캐스트의 충돌
-        if (enemy != null && enemy.enemyCurrentHP > 0)
+        if (enemy != null && enemy.EnemyCurrentHP > 0)
         {
-            enemy.enemyCurrentHP -= 1;
+            enemy.GetDamaged(1);
         }
     }
 
@@ -121,7 +125,7 @@ public class GameManager : MonoBehaviour
             SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(10f);
 
         // 2초 뒤에 해당 함수를 재귀호출한다.
         StartCoroutine(EnemySpawn());

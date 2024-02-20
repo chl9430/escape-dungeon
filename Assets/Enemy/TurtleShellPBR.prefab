@@ -600,6 +600,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HPBar: {fileID: 393002879176749584}
+  monName: Level 1
+  enemyMaxHP: 5
   enemyCurrentHP: 0
 --- !u!195 &3365443250108344876
 NavMeshAgent:
