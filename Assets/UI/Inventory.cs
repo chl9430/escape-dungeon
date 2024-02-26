@@ -67,7 +67,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            print("full");
+            print("Inventory is full!");
         }
     }
 
@@ -82,5 +82,10 @@ public class Inventory : MonoBehaviour
         useBtn.onClick.AddListener(() => {
             item.Use(playerObj);
         });
+    }
+
+    public int GetRemainedSlots()
+    {
+        return slots.Length - items.Count;
     }
 }

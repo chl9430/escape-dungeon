@@ -21,16 +21,19 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
+    bool isInventory;
 
     [Header("Quest")]
-    public int currentQuest;
+    [SerializeField] GameObject questBox;
+    int currentQuest;
+    bool isTalking;
+    bool isQuestBox;
 
-    public int CurrentQuest { get { return currentQuest; } }
+    public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
+    public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
 
     List<GameObject> items;
-    public List<GameObject> ItemList { 
-        get { return items; }
-    }
+    public List<GameObject> ItemList { get { return items; } }
 
     Enemy enemy;
     StarterAssetsInputs input;
@@ -38,9 +41,6 @@ public class PlayerManager : MonoBehaviour
     Animator anim;
     GameObject scanedNPCObj;
 
-    public GameObject ScanedNPCObj { get { return scanedNPCObj; } }
-
-    // Start is called before the first frame update
     void Start()
     {
         items = new List<GameObject>();
@@ -51,11 +51,12 @@ public class PlayerManager : MonoBehaviour
         weaponSound = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Talk();
         ShowInventory();
+        ShowQuestBox();
+        ActiveUI();
 
         // 컷신이 실행중일 경우
         if (!GameManager.instance.canPlayerMove)
@@ -72,19 +73,57 @@ public class PlayerManager : MonoBehaviour
         items.Add(item);
     }
 
+    public void ActiveUI()
+    {
+        if (isInventory)
+        {
+            inventory.SetActive(true);
+        }
+        else
+        {
+            inventory.SetActive(false);
+        }
+
+        if (isQuestBox)
+        {
+            questBox.SetActive(true);
+        }
+        else
+        {
+            questBox.SetActive(false);
+        }
+    }
+
+    void ShowQuestBox()
+    {
+        if (input.showQuest)
+        {
+            input.showQuest = false;
+
+            if (isQuestBox == false)
+            {
+                isQuestBox = true;
+            }
+            else
+            {
+                isQuestBox = false;
+            }
+        }
+    }
+
     void ShowInventory()
     {
         if (input.showInventory)
         {
             input.showInventory = false;
 
-            if (inventory.activeInHierarchy == false)
+            if (isInventory == false)
             {
-                inventory.SetActive(true);
+                isInventory = true;
             }
             else
             {
-                inventory.SetActive(false);
+                isInventory = false;
             }
         }
     }
@@ -236,11 +275,6 @@ public class PlayerManager : MonoBehaviour
     {
         weaponSound.clip = sound;
         weaponSound.Play();
-    }
-
-    public void SetCurrentQuest(int questKey)
-    {
-        currentQuest = questKey;
     }
 
     void OnTriggerEnter(Collider other)

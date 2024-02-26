@@ -2,31 +2,52 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuestManager : MonoBehaviour
 {
     public Action successQuest;
 
-    GameObject player;
-
     [Header("Quest 1010")]
     [SerializeField] int level1MonDeadCnt1010 = 5;
 
-    PlayerManager playerManager;
+    [SerializeField] GameObject questTextObj;
 
-    // Start is called before the first frame update
+    GameObject player;
+    PlayerManager playerManager;
+    Text currentQuest;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         playerManager = player.GetComponent<PlayerManager>();
+
+        if (questTextObj != null)
+        {
+            currentQuest = questTextObj.GetComponent<Text>();
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (playerManager.currentQuest == 1010 && level1MonDeadCnt1010 == 0)
+        if (playerManager.CurrentQuest == 1010)
         {
-            successQuest();
+            if (level1MonDeadCnt1010 == 0)
+            {
+                successQuest();
+                currentQuest.color = Color.green;
+                currentQuest.text = "몬스터를 5마리 처치하세요." + " (완료)";
+            }
+            else
+            {
+                currentQuest.color = Color.white;
+                currentQuest.text = "몬스터를 5마리 처치하세요." + " (" + level1MonDeadCnt1010 + "마리 남음)";
+            }
+        }
+        else
+        {
+            currentQuest.color = Color.white;
+            currentQuest.text = "진행 중인 퀘스트가 없습니다.";
         }
     }
 
@@ -34,7 +55,7 @@ public class QuestManager : MonoBehaviour
     {
         if (playerManager.CurrentQuest == 1010)
         {
-            if (deadMonName == "Level 1")
+            if (deadMonName == "Level 1" && level1MonDeadCnt1010 != 0)
             {
                 level1MonDeadCnt1010--;
             }

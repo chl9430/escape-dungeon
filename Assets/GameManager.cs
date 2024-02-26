@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     [Header("Guide")]
     [SerializeField] GameObject guideObj;
 
+    PlayerManager playerManager;
     PlayableDirector cut;
     public bool isWatching = false;
     public bool canPlayerMove = false;
@@ -41,13 +42,13 @@ public class GameManager : MonoBehaviour
         // 어디서든 접근 가능한 정적 변수
         instance = this;
 
+        playerManager = FindObjectOfType<PlayerManager>();
+
         // currentShootDelay = 0f;
 
         // 게임 시작 시, 컷신을 바로 플레이
         //cut = GetComponent<PlayableDirector>();
         //cut.Play();
-
-        
 
         InitBullet();
 
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isWatching || TalkManager.instance.isTalking)
+        if (isWatching || playerManager.IsTalking)
         {
             canPlayerMove = false;
         }

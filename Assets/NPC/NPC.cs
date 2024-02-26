@@ -9,21 +9,31 @@ public enum NPCQuestState
     SUCCESS_QUEST,
     NONE
 }
-
 public class NPC : MonoBehaviour
 {
     [SerializeField] int id;
+
     [SerializeField] Sprite haveQuest;
     [SerializeField] Sprite processQuest;
     [SerializeField] Sprite successQuest;
+    [SerializeField] GameObject[] firstRewardObjs;
 
-    QuestManager questManager;
-    Dictionary<int, string[]> talkData;
-    List<bool> successList;
-    Image questMark;
     int currentQuest = 0;
 
     NPCQuestState npcQuestState;
+
+    Dictionary<int, string[]> talkData;
+    Dictionary<int, GameObject[]> rewardData;
+    List<bool> successList;
+
+    QuestManager questManager;
+    Image questMark;
+
+    public int ID { get { return id; } }
+    public int CurrentQuest { get { return currentQuest; } }
+    public NPCQuestState NPCQuestState { get { return npcQuestState; } }
+    public Dictionary<int, string[]> TalkData { get { return talkData; } }
+    public Dictionary<int, GameObject[]> RewardData {  get {  return rewardData; } }
 
     string[] npcFirstHasQuest =
     {
@@ -69,11 +79,6 @@ public class NPC : MonoBehaviour
         "행운을 빌겠습니다. 도와주셔서 감사드립니다."
     };
 
-    public Dictionary<int, string[]> TalkData { get { return talkData; } }
-    public int ID { get { return id; } }
-    public int CurrentQuest { get { return currentQuest; } }
-    public NPCQuestState NPCQuestState { get { return npcQuestState; } }
-
     void Start()
     {
         questManager = FindObjectOfType<QuestManager>();
@@ -84,6 +89,7 @@ public class NPC : MonoBehaviour
         }
 
         talkData = new Dictionary<int, string[]>();
+        rewardData = new Dictionary<int, GameObject[]>();
         successList = new List<bool>();
         questMark = GetComponentInChildren<Image>();
         GenerateData();
@@ -92,6 +98,18 @@ public class NPC : MonoBehaviour
     void Update()
     {
         UpdateQuestMark();
+    }
+
+    public void CheckNextQuest()
+    {
+        if (talkData.ContainsKey(id + ((currentQuest + 1) * 10)))
+        {
+            npcQuestState = NPCQuestState.HAVE_QUEST;
+        }
+        else
+        {
+            npcQuestState = NPCQuestState.NONE;
+        }
     }
 
     void UpdateQuestMark()
@@ -108,6 +126,11 @@ public class NPC : MonoBehaviour
         {
             questMark.sprite = successQuest;
         }
+        else
+        {
+            questMark.sprite = null;
+            questMark.color = new Color(0, 0, 0, 0);
+        }
     }
 
     void GenerateData()
@@ -121,6 +144,9 @@ public class NPC : MonoBehaviour
         talkData.Add(1020, npcSecondHasQuest);
         talkData.Add(1021, npcSecondProcessQuest);
         talkData.Add(1022, npcSecondSuccessQuest);
+
+        // 첫번째 퀘스트 리워드
+        rewardData.Add(1010, firstRewardObjs);
     }
 
     public void IncreaseCurrentQuest()
@@ -135,6 +161,7 @@ public class NPC : MonoBehaviour
 
     void SetSuccessArr()
     {
+
         successList[currentQuest] = true;
 
         if (npcQuestState == NPCQuestState.PROCESS_QUEST)
