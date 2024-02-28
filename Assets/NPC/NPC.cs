@@ -16,17 +16,16 @@ public class NPC : MonoBehaviour
     [SerializeField] Sprite haveQuest;
     [SerializeField] Sprite processQuest;
     [SerializeField] Sprite successQuest;
-    [SerializeField] GameObject[] firstRewardObjs;
 
     int currentQuest = 0;
 
-    NPCQuestState npcQuestState;
+    public NPCQuestState npcQuestState;
 
     Dictionary<int, string[]> talkData;
+    Dictionary<int, GameObject[]> requestObjData;
+    Dictionary<int, GameObject[]> interactiveNPCData;
     Dictionary<int, GameObject[]> rewardData;
     List<bool> successList;
-
-    QuestManager questManager;
     Image questMark;
 
     public int ID { get { return id; } }
@@ -34,119 +33,78 @@ public class NPC : MonoBehaviour
     public NPCQuestState NPCQuestState { get { return npcQuestState; } }
     public Dictionary<int, string[]> TalkData { get { return talkData; } }
     public Dictionary<int, GameObject[]> RewardData {  get {  return rewardData; } }
+    public Dictionary<int, GameObject[]> RequestObjData { get { return requestObjData; } }
+    public Dictionary<int, GameObject[]> InteractiveNPCData { get { return interactiveNPCData; } }
 
-    string[] npcFirstHasQuest =
+    void Awake()
     {
-        "안녕하십니까? 이곳은 처음이신가요?",
-        "간단한 퀘스트를 드리겠습니다.",
-        "몬스터 한마리를 잡고 저에게 다시 와주세요.",
-        "당신이 이곳을 탈출하는데 도움이 될만한 것을 드리겠습니다.",
-    };
-
-    string[] npcFirstProcessQuest =
-    {
-        "아직인가요? 제가 그렇게 어려운 부탁을 한 것 같지는 않습니다만..."
-    };
-
-    string[] npcFirstSuccessQuest =
-    {
-        "수고많으셨습니다.",
-        "이 열쇠를 받아주세요.",
-        "이 열쇠는 당신이 곧 찾게 될 문을 열게 해주는 열쇠입니다.",
-        "부디 행운을 빌겠습니다."
-    };
-
-    string[] npcSecondHasQuest =
-    {
-        "잠깐, 가기 전에 드릴 말씀이 있습니다.",
-        "다음 장소에 가게 되면 저와 비슷하게 생긴 친구를 볼 수 있을겁니다.",
-        "그 친구에게 이 편지를 전달해주세요. 그리고 답장을 받아와주세요.",
-        "당신이 이곳을 탈출하는데 또 다른 도움이 될만한 것을 드리겠습니다.",
-    };
-
-    string[] npcSecondProcessQuest =
-    {
-        "답장은 받아오셨나요?",
-        "...아 아직이군요.",
-    };
-
-    string[] npcSecondSuccessQuest =
-    {
-        "답장을 받아오셨나요?",
-        "아 감사합니다! 어디 한번 볼까요...",
-        "흠 그렇군요. 감사합니다.",
-        "이건 제 감사의 뜻입니다.",
-        "행운을 빌겠습니다. 도와주셔서 감사드립니다."
-    };
-
-    void Start()
-    {
-        questManager = FindObjectOfType<QuestManager>();
-
-        if (questManager != null)
-        {
-            questManager.successQuest += SetSuccessArr;
-        }
-
         talkData = new Dictionary<int, string[]>();
+        requestObjData = new Dictionary<int, GameObject[]>();
+        interactiveNPCData = new Dictionary<int, GameObject[]>();
         rewardData = new Dictionary<int, GameObject[]>();
         successList = new List<bool>();
         questMark = GetComponentInChildren<Image>();
-        GenerateData();
     }
 
-    void Update()
+    protected void AddTalkData(int _key, string[] _talks)
     {
-        UpdateQuestMark();
+        talkData.Add(_key, _talks);
     }
 
-    public void CheckNextQuest()
+    protected void AddInteractiveNPCData(int _key, GameObject[] _npcObjs)
     {
-        if (talkData.ContainsKey(id + ((currentQuest + 1) * 10)))
-        {
-            npcQuestState = NPCQuestState.HAVE_QUEST;
-        }
-        else
-        {
-            npcQuestState = NPCQuestState.NONE;
-        }
+        interactiveNPCData.Add(_key, _npcObjs);
     }
 
-    void UpdateQuestMark()
+    protected void AddRewardData(int _key, GameObject[] _rewardObjs)
     {
-        if (npcQuestState == NPCQuestState.HAVE_QUEST)
-        {
-            questMark.sprite = haveQuest;
-        }
-        else if (npcQuestState == NPCQuestState.PROCESS_QUEST)
-        {
-            questMark.sprite = processQuest;
-        }
-        else if (npcQuestState == NPCQuestState.SUCCESS_QUEST)
-        {
-            questMark.sprite = successQuest;
-        }
-        else
+        rewardData.Add(_key, _rewardObjs);
+    }
+
+    protected void AddRequestObjData(int _key, GameObject[] _requestObjs)
+    {
+        requestObjData.Add(_key, _requestObjs);
+    }
+
+    protected void UpdateQuestMark()
+    {
+        Color newColor = questMark.color;
+
+        if (npcQuestState == NPCQuestState.NONE)
         {
             questMark.sprite = null;
-            questMark.color = new Color(0, 0, 0, 0);
+            newColor.a = 0;
+            questMark.color = newColor;
+        }
+        else
+        {
+            if (npcQuestState == NPCQuestState.HAVE_QUEST)
+            {
+                questMark.sprite = haveQuest;
+
+            }
+            else if (npcQuestState == NPCQuestState.PROCESS_QUEST)
+            {
+                questMark.sprite = processQuest;
+            }
+            else if (npcQuestState == NPCQuestState.SUCCESS_QUEST)
+            {
+                questMark.sprite = successQuest;
+            }
+
+            newColor.a = 1;
+            questMark.color = newColor;
         }
     }
 
-    void GenerateData()
+    public void SetSuccessArr()
     {
-        //첫번째 퀘스트
-        talkData.Add(1010, npcFirstHasQuest);
-        talkData.Add(1011, npcFirstProcessQuest);
-        talkData.Add(1012, npcFirstSuccessQuest);
+        successList[currentQuest] = true;
 
-        // 두번째 퀘스트
-        talkData.Add(1020, npcSecondHasQuest);
-        talkData.Add(1021, npcSecondProcessQuest);
-        talkData.Add(1022, npcSecondSuccessQuest);
-
-        // 첫번째 퀘스트 리워드
-        rewardData.Add(1010, firstRewardObjs);
+        if (npcQuestState == NPCQuestState.PROCESS_QUEST)
+        {
+            npcQuestState = NPCQuestState.SUCCESS_QUEST;
+        }
     }
 
     public void IncreaseCurrentQuest()
@@ -159,19 +117,20 @@ public class NPC : MonoBehaviour
         successList.Add(false);
     }
 
-    void SetSuccessArr()
+    public void SetNPCQuestState(NPCQuestState _state)
     {
-
-        successList[currentQuest] = true;
-
-        if (npcQuestState == NPCQuestState.PROCESS_QUEST)
-        {
-            npcQuestState = NPCQuestState.SUCCESS_QUEST;
-        }
+        npcQuestState = _state;
     }
 
-    public void SetNPCQuestState(NPCQuestState state)
+    public void CheckNextQuest()
     {
-        npcQuestState = state;
+        if (talkData.ContainsKey(id + ((currentQuest + 1) * 10)))
+        {
+            npcQuestState = NPCQuestState.HAVE_QUEST;
+        }
+        else
+        {
+            npcQuestState = NPCQuestState.NONE;
+        }
     }
 }

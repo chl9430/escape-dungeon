@@ -8,18 +8,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [Header("Bullet")]
-    [SerializeField] Transform bulletPoint;
-    [SerializeField] Text bulletText;
-    int maxBullet = 30;
-    int currentBullet = 0;
+    //[Header("Bullet")]
+    //[SerializeField] Transform bulletPoint;
+    //[SerializeField] Text bulletText;
+    //int maxBullet = 30;
+    //int currentBullet = 0;
 
-    [Header("Weapon FX")]
-    [SerializeField] GameObject weaponFlashFX;
-    [SerializeField] Transform bulletCasePoint;
-    [SerializeField] GameObject bulletCaseFX;
-    [SerializeField] Transform weaponClipPoint;
-    [SerializeField] GameObject weaponClipFX;
+    //[Header("Weapon FX")]
+    //[SerializeField] GameObject weaponFlashFX;
+    //[SerializeField] Transform bulletCasePoint;
+    //[SerializeField] GameObject bulletCaseFX;
+    //[SerializeField] Transform weaponClipPoint;
+    //[SerializeField] GameObject weaponClipFX;
 
     [Header("Enemy")]
     [SerializeField] GameObject[] spawnPoint;
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
         //cut = GetComponent<PlayableDirector>();
         //cut.Play();
 
-        InitBullet();
+        // InitBullet();
 
         StartCoroutine(EnemySpawn());
     }
@@ -67,53 +67,53 @@ public class GameManager : MonoBehaviour
             canPlayerMove = true;
         }
 
-        bulletText.text = currentBullet + " / " + maxBullet;
+        //bulletText.text = currentBullet + " / " + maxBullet;
     }
 
-    public void Shooting(Vector3 targetPosition, Enemy enemy, AudioSource weaponSound, AudioClip shootingSound)
-    {
-        if (currentBullet <= 0)
-            return;
+    //public void Shooting(Vector3 targetPosition, Enemy enemy, AudioSource weaponSound, AudioClip shootingSound)
+    //{
+    //    if (currentBullet <= 0)
+    //        return;
 
-        currentBullet -= 1;
+    //    currentBullet -= 1;
 
-        weaponSound.clip = shootingSound;
-        weaponSound.Play();
+    //    weaponSound.clip = shootingSound;
+    //    weaponSound.Play();
 
-        Vector3 aim = (targetPosition - bulletPoint.position).normalized;
+    //    Vector3 aim = (targetPosition - bulletPoint.position).normalized;
 
-        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
-        GameObject flashFX = PoolManager.instance.ActiveObj(0);
-        SetObjPosition(flashFX, bulletPoint);
-        flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
+    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
+    //    GameObject flashFX = PoolManager.instance.ActiveObj(0);
+    //    SetObjPosition(flashFX, bulletPoint);
+    //    flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
 
-        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
-        GameObject caseFX = PoolManager.instance.ActiveObj(1);
-        SetObjPosition(caseFX, bulletCasePoint);
+    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
+    //    GameObject caseFX = PoolManager.instance.ActiveObj(1);
+    //    SetObjPosition(caseFX, bulletCasePoint);
 
-        // 레이캐스트의 충돌
-        if (enemy != null && enemy.EnemyCurrentHP > 0)
-        {
-            enemy.GetDamaged(1);
-        }
-    }
+    //    // 레이캐스트의 충돌
+    //    if (enemy != null && enemy.EnemyCurrentHP > 0)
+    //    {
+    //        enemy.GetDamaged(1);
+    //    }
+    //}
 
-    // 탄창이 바뀌고 탄창이 채워지는 함수
-    public void ReloadClip()
-    {
-        // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
-        GameObject clipFX = PoolManager.instance.ActiveObj(2);
-        SetObjPosition(clipFX, weaponClipPoint);
+    //// 탄창이 바뀌고 탄창이 채워지는 함수
+    //public void ReloadClip()
+    //{
+    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
+    //    GameObject clipFX = PoolManager.instance.ActiveObj(2);
+    //    SetObjPosition(clipFX, weaponClipPoint);
 
-        InitBullet();
-    }
+    //    InitBullet();
+    //}
 
-    void InitBullet()
-    {
-        currentBullet = maxBullet;
-    }
+    //void InitBullet()
+    //{
+    //    currentBullet = maxBullet;
+    //}
 
-    void SetObjPosition(GameObject obj, Transform targetTransform)
+    public void SetObjPosition(GameObject obj, Transform targetTransform)
     {
         obj.transform.position = targetTransform.position;
     }

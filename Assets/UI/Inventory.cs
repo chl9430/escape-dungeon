@@ -17,17 +17,11 @@ public class Inventory : MonoBehaviour
     GameObject selectedItem;
     List<GameObject> items;
 
-    private void OnValidate()
-    {
-        slots = slotParent.GetComponentsInChildren<Slot>();
-    }
-
-    void OnEnable()
+    void Start()
     {
         playerObj = FindObjectOfType<PlayerManager>().gameObject;
         items = playerObj.GetComponent<PlayerManager>().ItemList;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        slots = slotParent.GetComponentsInChildren<Slot>();
     }
 
     void Update()
@@ -36,12 +30,6 @@ public class Inventory : MonoBehaviour
         {
             AddItem(item);
         }
-    }
-
-    void OnDisable()
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void FreshSlot()
@@ -71,9 +59,9 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void SetSelectedItem(GameObject itemObj)
+    public void SetSelectedItem(GameObject _itemObj)
     {
-        selectedItem = itemObj;
+        selectedItem = _itemObj;
 
         IItem item = selectedItem.GetComponent<IItem>();
 
@@ -82,6 +70,22 @@ public class Inventory : MonoBehaviour
         useBtn.onClick.AddListener(() => {
             item.Use(playerObj);
         });
+    }
+
+    public void SetIsShowingInven(bool _isShowing)
+    {
+        if (_isShowing)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1200);
+        }
     }
 
     public int GetRemainedSlots()

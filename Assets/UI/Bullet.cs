@@ -5,8 +5,8 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class Bullet : MonoBehaviour, IItem
 {
-    [SerializeField] string itemName = "Bullet";
-    [SerializeField] string itemDescription = "총알의 갯수를 10개 증가시킵니다.";
+    [SerializeField] string itemName = "Max Bullet";
+    [SerializeField] string itemDescription = "총알의 최대 소지량을 10개 증가시킵니다.";
 
     public void Use(GameObject target)
     {

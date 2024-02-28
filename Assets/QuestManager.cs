@@ -6,16 +6,17 @@ using UnityEngine.UI;
 
 public class QuestManager : MonoBehaviour
 {
-    public Action successQuest;
-
     [Header("Quest 1010")]
-    [SerializeField] int level1MonDeadCnt1010 = 5;
+    [SerializeField] int level1MonDeadCnt1010 = 1;
 
     [SerializeField] GameObject questTextObj;
 
     GameObject player;
+    GameObject questNPCObj;
     PlayerManager playerManager;
     Text currentQuest;
+
+    public GameObject QuestNPCObj { set { questNPCObj = value; } }
 
     void Start()
     {
@@ -34,7 +35,7 @@ public class QuestManager : MonoBehaviour
         {
             if (level1MonDeadCnt1010 == 0)
             {
-                successQuest();
+                questNPCObj.GetComponent<NPC>().SetSuccessArr();
                 currentQuest.color = Color.green;
                 currentQuest.text = "몬스터를 5마리 처치하세요." + " (완료)";
             }

@@ -5,19 +5,6 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    [Header("Aim")]
-    [SerializeField] CinemachineVirtualCamera aimCam;
-    [SerializeField] GameObject aimImage;
-    [SerializeField] GameObject aimObj;
-    [SerializeField] float aimObjDis = 10f;
-    [SerializeField] float maxShootDelay = 1f;
-    [SerializeField] float currentShootDelay = 0;
-    [SerializeField] LayerMask targetLayer;
-
-    [Header("Weapon Sound Effect")]
-    [SerializeField] AudioClip shootingSound;
-    [SerializeField] AudioClip[] reloadSound;
-    AudioSource weaponSound;
 
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
@@ -29,26 +16,34 @@ public class PlayerManager : MonoBehaviour
     bool isTalking;
     bool isQuestBox;
 
+    [Header("Weapon")]
+    GameObject weaponObj;
+    Pistol pistol;
+
     public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
 
     List<GameObject> items;
     public List<GameObject> ItemList { get { return items; } }
 
-    Enemy enemy;
     StarterAssetsInputs input;
     ThirdPersonController controller;
     Animator anim;
     GameObject scanedNPCObj;
 
-    void Start()
+    void Awake()
     {
         items = new List<GameObject>();
-        currentShootDelay = 0f;
         input = GetComponent<StarterAssetsInputs>();
         controller = GetComponent<ThirdPersonController>();
         anim = GetComponent<Animator>();
-        weaponSound = GetComponent<AudioSource>();
+        weaponObj = FindObjectOfType<Pistol>().gameObject;
+        pistol = weaponObj.GetComponent<Pistol>();
+    }
+
+    void Start()
+    {
+        inventory = FindObjectOfType<Inventory>().gameObject;
     }
 
     void Update()
@@ -61,7 +56,8 @@ public class PlayerManager : MonoBehaviour
         // 컷신이 실행중일 경우
         if (!GameManager.instance.canPlayerMove)
         {
-            AimControll(false);
+            pistol.SetAim(false);
+            controller.isAimMove = false;
             return;
         }
 
@@ -77,11 +73,11 @@ public class PlayerManager : MonoBehaviour
     {
         if (isInventory)
         {
-            inventory.SetActive(true);
+            inventory.GetComponent<Inventory>().SetIsShowingInven(true);
         }
         else
         {
-            inventory.SetActive(false);
+            inventory.GetComponent<Inventory>().SetIsShowingInven(false);
         }
 
         if (isQuestBox)
@@ -153,7 +149,8 @@ public class PlayerManager : MonoBehaviour
                 return;
             }
 
-            AimControll(false);
+            pistol.SetAim(false);
+            controller.isAimMove = false;
             anim.SetLayerWeight(1, 1);
             anim.SetTrigger("Reload");
             controller.isReload = true;
@@ -169,30 +166,12 @@ public class PlayerManager : MonoBehaviour
         if (input.aim)
         {
             // 에임 카메라로 전환
-            AimControll(true);
+            pistol.SetAim(true);
+            controller.isAimMove = true;
 
             anim.SetLayerWeight(1, 1);
 
-            Vector3 targetPosition = Vector3.zero;
-            Transform camTransform = Camera.main.transform;
-            RaycastHit hit;
-
-            // 카메라 전방 방향으로 레이캐스트 발사
-            if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity, targetLayer))
-            {
-                targetPosition = hit.point;
-                aimObj.transform.position = hit.point;
-
-                enemy = hit.collider.gameObject.GetComponent<Enemy>();
-            }
-            else
-            {
-                // 조준 된 게 없을때는 타겟을 항상 카메라 전방으로 설정
-                targetPosition = camTransform.position + camTransform.forward * aimObjDis;
-                aimObj.transform.position = camTransform.position + camTransform.forward * aimObjDis;
-            }
-
-            Vector3 targetAim = targetPosition;
+            Vector3 targetAim = pistol.GetTargetPos();
             targetAim.y = transform.position.y;
             Vector3 aimDir = (targetAim - transform.position).normalized;
 
@@ -202,54 +181,40 @@ public class PlayerManager : MonoBehaviour
             // 등록된 shoot 버튼을 눌렀을 때
             if (input.shoot)
             {
-                if (currentShootDelay == 0)
+                if (pistol.Shoot(targetAim))
                 {
-                    currentShootDelay += Time.deltaTime;
-
                     anim.SetBool("Shoot", true);
-
-                    GameManager.instance.Shooting(targetPosition, enemy, weaponSound, shootingSound);
                 }
                 else
                 {
                     anim.SetBool("Shoot", false);
-
-                    currentShootDelay += Time.deltaTime;
-
-                    if (currentShootDelay > maxShootDelay)
-                    {
-                        currentShootDelay = 0;
-                    }
                 }
             }
             else
             {
                 anim.SetBool("Shoot", false);
 
-                if (currentShootDelay != 0)
-                {
-                    currentShootDelay += Time.deltaTime;
-
-                    if (currentShootDelay > maxShootDelay)
-                    {
-                        currentShootDelay = 0;
-                    }
-                }
+                pistol.ResetShootDelay();
             }
         }
         else
         {
-            AimControll(false);
+            pistol.SetAim(false);
+            controller.isAimMove = false;
             anim.SetLayerWeight(1, 0);
             anim.SetBool("Shoot", false);
         }
     }
 
-    void AimControll(bool isCheck)
+    public void ReloadWeaponClip()
     {
-        aimCam.gameObject.SetActive(isCheck);
-        aimImage.SetActive(isCheck);
-        controller.isAimMove = isCheck;
+        pistol.ReloadClip();
+        pistol.PlayReloadingSound(0);
+    }
+
+    public void ReloadInsertClip()
+    {
+        pistol.PlayReloadingSound(1);
     }
 
     // 재장전 상태를 해제하는 함수(재장전 애니메이션의 끝 부분에 호출된다.)
@@ -257,24 +222,7 @@ public class PlayerManager : MonoBehaviour
     {
         controller.isReload = false;
         anim.SetLayerWeight(1, 0);
-        PlayWeaponSound(reloadSound[2]);
-    }
-
-    public void ReloadWeaponClip()
-    {
-        GameManager.instance.ReloadClip();
-        PlayWeaponSound(reloadSound[0]);
-    }
-
-    public void ReloadInsertClip()
-    {
-        PlayWeaponSound(reloadSound[1]);
-    }
-
-    void PlayWeaponSound(AudioClip sound)
-    {
-        weaponSound.clip = sound;
-        weaponSound.Play();
+        pistol.PlayReloadingSound(2);
     }
 
     void OnTriggerEnter(Collider other)
