@@ -22,6 +22,7 @@ public class Pistol : MonoBehaviour
     [SerializeField] Text bulletText;
 
     int maxBullet = 30;
+    public int MaxBullet { get { return maxBullet; } set { maxBullet += value; } }
     int currentBullet = 0;
 
     [Header("Weapon FX")]

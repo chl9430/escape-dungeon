@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class Slot : MonoBehaviour
 {
     [SerializeField] GameObject item;
+    [SerializeField] Sprite emptyImgSprite;
 
-    public Inventory inventory;
+    Inventory inventory;
     Image image;
 
     void Start()
@@ -25,17 +26,16 @@ public class Slot : MonoBehaviour
             if (item != null)
             {
                 image.sprite = item.GetComponent<Image>().sprite;
-                image.color = new Color(1, 1, 1, 1);
             }
             else
             {
-                image.color = new Color(1, 1, 1, 0);
+                image.sprite = emptyImgSprite;
             }
         }
     }
 
     public void SelectItem()
     {
-        inventory.SetSelectedItem(item);
+        inventory.SetSelectedItem(item, this);
     }
 }

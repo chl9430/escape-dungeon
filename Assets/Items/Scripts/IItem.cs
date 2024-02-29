@@ -2,13 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[CreateAssetMenu]
-//public class Item : ScriptableObject
-//{
-//    public string itemName;
-//    public Sprite itemImage;
-//}
-
 // 아이템 타입들이 반드시 구현해야하는 인터페이스
 public interface IItem
 {
@@ -17,4 +10,5 @@ public interface IItem
 
     string GetItemName();
     string GetItemDescription();
+    bool IsUsable();
 }

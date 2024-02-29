@@ -26,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     List<GameObject> items;
     public List<GameObject> ItemList { get { return items; } }
 
+    public Pistol Pistol { get {  return pistol; } }
+
     StarterAssetsInputs input;
     ThirdPersonController controller;
     Animator anim;
