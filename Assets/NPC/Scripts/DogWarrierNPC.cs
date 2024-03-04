@@ -10,6 +10,7 @@ public class DogWarrierNPC : NPC
     [Header("1020 Quest")]
     [SerializeField] GameObject[] requestObjs1020;
     [SerializeField] GameObject[] interactiveNPCObjs1020;
+    [SerializeField] GameObject[] RewardObjs1020;
 
     string[] npcFirstHasQuest =
      {
@@ -70,6 +71,7 @@ public class DogWarrierNPC : NPC
 
         AddRequestObjData(1020, requestObjs1020);
         AddInteractiveNPCData(1020, interactiveNPCObjs1020);
+        AddRewardData(1020, RewardObjs1020);
     }
 
     // Update is called once per frame

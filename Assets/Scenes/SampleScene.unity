@@ -6174,9 +6174,12 @@ MonoBehaviour:
   RewardObjs1010:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   requestObjs1020:
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
   interactiveNPCObjs1020:
   - {fileID: 1433611946}
+  RewardObjs1020:
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
 --- !u!1 &657165992
 GameObject:
   m_ObjectHideFlags: 0
@@ -7885,7 +7888,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 136306802490482818, guid: ccd8c3b89aa02e943a08ab9238a8a70c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4463868907105534, guid: ccd8c3b89aa02e943a08ab9238a8a70c, type: 3}
@@ -7895,6 +7899,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1248815240492774, guid: ccd8c3b89aa02e943a08ab9238a8a70c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1433611950}
+    - targetCorrespondingSourceObject: {fileID: 1248815240492774, guid: ccd8c3b89aa02e943a08ab9238a8a70c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1433611953}
   m_SourcePrefab: {fileID: 100100000, guid: ccd8c3b89aa02e943a08ab9238a8a70c, type: 3}
 --- !u!1 &1112551223
 GameObject:
@@ -9028,6 +9035,29 @@ MonoBehaviour:
   processQuest: {fileID: 21300000, guid: c8e927090ec80f74599f34a1441516d2, type: 3}
   successQuest: {fileID: 21300000, guid: 7c164a8ab621d5b4cbfdafbb24034032, type: 3}
   npcQuestState: 0
+  requestObjs1020:
+  - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
+--- !u!65 &1433611953
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433611946}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &1434771550
 PrefabInstance:
   m_ObjectHideFlags: 0

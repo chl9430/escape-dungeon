@@ -33,6 +33,18 @@ public class TalkManager : MonoBehaviour
         int questMainKey = npc.ID + (10 * (npc.CurrentQuest + 1));
         int key = npc.ID + (int)npc.NPCQuestState + (10 * (npc.CurrentQuest + 1));
 
+        // 퀘스트 키 하드코딩 부분
+        if (npc.InteractiveTalkKey != 0)
+        {
+            key = npc.InteractiveTalkKey;
+
+            // 퀘스트에 따른 하드코딩 부분
+            if (npc.InteractiveTalkKey == 1023)
+            {
+                questMainKey = 1020;
+            }
+        }
+
         if (!npc.TalkData.ContainsKey(key))
         {
             return;
@@ -43,6 +55,7 @@ public class TalkManager : MonoBehaviour
             {
                 if (npc.NPCQuestState == NPCQuestState.HAVE_QUEST) // 퀘스트를 받았다면
                 {
+                    // 퀘스트에 따른 하드코딩 부분
                     if (questMainKey == 1020)
                     {
                         // 플레이어에게 전달할 물건이 있다면 전달한다.
@@ -55,7 +68,13 @@ public class TalkManager : MonoBehaviour
                             // 물건을 받아야할 NPC를 퀘스트 완료상태로 변경
                             for (int i = 0; i < npc.InteractiveNPCData[questMainKey].Length; i++)
                             {
-                                npc.InteractiveNPCData[questMainKey][i].GetComponent<NPC>().SetNPCQuestState(NPCQuestState.SUCCESS_QUEST);
+                                NPC interactiveNPC = npc.InteractiveNPCData[questMainKey][i].GetComponent<NPC>();
+                                interactiveNPC.SetNPCQuestState(NPCQuestState.SUCCESS_QUEST);
+                                interactiveNPC.InteractiveTalkKey = 1023;
+
+                                // 물건을 받아야할 NPC에게도 참조를 할당
+                                interactiveNPC.RequestNPCObj = npc.gameObject;
+                                interactiveNPC.RequestObjs = npc.RequestObjData[1020];
                             }
                         }
                         else
@@ -76,20 +95,105 @@ public class TalkManager : MonoBehaviour
                 }
                 else if (npc.NPCQuestState == NPCQuestState.SUCCESS_QUEST) // 퀘스트를 완료했다면
                 {
-                    // 아이템을 주거나, 인벤토리의 빈칸을 확인한다. (보상)
-                    if (GiveItem(npc.RewardData[npc.ID + ((npc.CurrentQuest + 1) * 10)]))
+                    // 퀘스트에 따른 하드코딩 부분
+                    if (npc.InteractiveTalkKey == 1023)
                     {
-                        playerManager.CurrentQuest = 0;
-                        npc.IncreaseCurrentQuest();
-                        npc.CheckNextQuest();
-                        questManager.QuestNPCObj = null;
+                        NPC interactiveNPC = npc.RequestNPCObj.GetComponent<NPC>();
+                        Inventory inven = playerManager.Inventory.GetComponent<Inventory>();
+
+                        // 전달해줄 물건을 전달하고 난 후 인벤토리에 빈칸이 있다면
+                        if (inven.GetRemainedSlots() + npc.RequestObjs.Length > npc.RequestObjData[1020].Length)
+                        {
+                            // npc에게 전달해줄 물건을 전달한다.
+                            for (int i = 0; i < npc.RequestObjs.Length; i++)
+                            {
+                                inven.PassItemToNPC(npc.RequestObjs[i]);
+                            }
+
+                            // npc에게 물건을 받는다.
+                            for (int i = 0; i < npc.RequestObjData[1020].Length; i++)
+                            {
+                                inven.AddItem(npc.RequestObjData[1020][i]);
+                            }
+
+                            // 물건을 받아야할 NPC에게도 참조를 할당
+                            interactiveNPC.RequestNPCObj = npc.gameObject;
+                            interactiveNPC.RequestObjs = npc.RequestObjData[1020];
+
+                            // 물건을 받게될 NPC에게 퀘스트 완료처리
+                            interactiveNPC.npcQuestState = NPCQuestState.SUCCESS_QUEST;
+
+                            // 현재 대화 중인 NPC에게 퀘스트 없음처리
+                            npc.InteractiveTalkKey = 0;
+                            npc.RequestNPCObj = null;
+                            npc.RequestObjs = null;
+                            npc.SetNPCQuestState(NPCQuestState.NONE);
+                        }
+                        else
+                        {
+                            // 인벤토리가 꽉 찼다면, 대화 완료처리 X
+                            SetTalkingEnvironment(false, playerManager);
+                            talkIndex = 0;
+                            return;
+                        }
                     }
                     else
                     {
-                        // 인벤토리가 꽉 찼다면, 퀘스트 완료처리 X
-                        SetTalkingEnvironment(false, playerManager);
-                        talkIndex = 0;
-                        return;
+                        Inventory inven = playerManager.Inventory.GetComponent<Inventory>();
+
+                        // npc에게 전달해줄 물건이 있다면
+                        if (npc.RequestObjs != null)
+                        {
+                            // 전달해줄 물건을 전달하고 난 후 인벤토리에 빈칸이 있다면
+                            if (inven.GetRemainedSlots() + npc.RequestObjs.Length > npc.RewardData[questMainKey].Length)
+                            {
+                                // 물건을 npc에게 전달한다.
+                                for (int i = 0; i < npc.RequestObjs.Length; i++)
+                                {
+                                    inven.PassItemToNPC(npc.RequestObjs[i]);
+                                }
+
+                                // npc에게 보상을 받는다.
+                                for (int i = 0; i < npc.RewardData[questMainKey].Length; i++)
+                                {
+                                    inven.AddItem(npc.RewardData[questMainKey][i]);
+                                }
+
+                                // 퀘스트 완료처리
+                                npc.RequestObjs = null;
+                                playerManager.CurrentQuest = 0;
+                                npc.IncreaseCurrentQuest();
+                                npc.CheckNextQuest();
+                                questManager.QuestNPCObj = null;
+                            }
+                            else
+                            {
+                                // 인벤토리가 꽉 찼다면, 퀘스트 완료처리 X
+                                SetTalkingEnvironment(false, playerManager);
+                                talkIndex = 0;
+                                return;
+                            }
+                        }
+                        else if (npc.RequestObjs == null) // npc에게 전달해줄 물건이 없다면
+                        {
+                            // 보상을 주는데 성공했다면 (인벤토리 빈칸이 남아있다면)
+                            if (GiveItem(npc.RewardData[questMainKey]))
+                            {
+                                // 퀘스트 완료처리
+                                npc.RequestObjs = null;
+                                playerManager.CurrentQuest = 0;
+                                npc.IncreaseCurrentQuest();
+                                npc.CheckNextQuest();
+                                questManager.QuestNPCObj = null;
+                            }
+                            else
+                            {
+                                // 인벤토리가 꽉 찼다면, 퀘스트 완료처리 X
+                                SetTalkingEnvironment(false, playerManager);
+                                talkIndex = 0;
+                                return;
+                            }
+                        }
                     }
                 }
 
@@ -138,7 +242,6 @@ public class TalkManager : MonoBehaviour
         else // 인벤토리 남은 공간이 없다면
         {
             return false;
-            
         }
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WizardNPC : NPC
 {
+    [Header("1020 Quest")]
+    [SerializeField] GameObject[] requestObjs1020;
     string[] receiveMessageTalks =
     {
         "안녕하세요! 무슨일인가요?",
@@ -16,7 +18,7 @@ public class WizardNPC : NPC
     void Start()
     {
         CheckNextQuest();
-
+        AddRequestObjData(1020, requestObjs1020);
         AddTalkData(1023, receiveMessageTalks);
     }
 

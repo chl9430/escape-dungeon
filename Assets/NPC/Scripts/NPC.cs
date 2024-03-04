@@ -18,6 +18,7 @@ public class NPC : MonoBehaviour
     [SerializeField] Sprite successQuest;
 
     int currentQuest = 0;
+    int interactiveTalkKey;
 
     public NPCQuestState npcQuestState;
 
@@ -25,16 +26,23 @@ public class NPC : MonoBehaviour
     Dictionary<int, GameObject[]> requestObjData;
     Dictionary<int, GameObject[]> interactiveNPCData;
     Dictionary<int, GameObject[]> rewardData;
+
+    GameObject requestNPCObj;
+    GameObject[] requestObjs;
+
     List<bool> successList;
     Image questMark;
 
     public int ID { get { return id; } }
     public int CurrentQuest { get { return currentQuest; } }
+    public int InteractiveTalkKey { get { return interactiveTalkKey; } set { interactiveTalkKey = value; } }
     public NPCQuestState NPCQuestState { get { return npcQuestState; } }
     public Dictionary<int, string[]> TalkData { get { return talkData; } }
     public Dictionary<int, GameObject[]> RewardData {  get {  return rewardData; } }
     public Dictionary<int, GameObject[]> RequestObjData { get { return requestObjData; } }
     public Dictionary<int, GameObject[]> InteractiveNPCData { get { return interactiveNPCData; } }
+    public GameObject RequestNPCObj { get { return requestNPCObj; } set { requestNPCObj = value; } }
+    public GameObject[] RequestObjs { get { return requestObjs; } set { requestObjs = value; } }
 
     void Awake()
     {
@@ -46,22 +54,22 @@ public class NPC : MonoBehaviour
         questMark = GetComponentInChildren<Image>();
     }
 
-    protected void AddTalkData(int _key, string[] _talks)
+    public void AddTalkData(int _key, string[] _talks)
     {
         talkData.Add(_key, _talks);
     }
 
-    protected void AddInteractiveNPCData(int _key, GameObject[] _npcObjs)
+    public void AddInteractiveNPCData(int _key, GameObject[] _npcObjs)
     {
         interactiveNPCData.Add(_key, _npcObjs);
     }
 
-    protected void AddRewardData(int _key, GameObject[] _rewardObjs)
+    public void AddRewardData(int _key, GameObject[] _rewardObjs)
     {
         rewardData.Add(_key, _rewardObjs);
     }
 
-    protected void AddRequestObjData(int _key, GameObject[] _requestObjs)
+    public void AddRequestObjData(int _key, GameObject[] _requestObjs)
     {
         requestObjData.Add(_key, _requestObjs);
     }

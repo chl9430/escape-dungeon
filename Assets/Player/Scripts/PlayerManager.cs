@@ -20,11 +20,9 @@ public class PlayerManager : MonoBehaviour
     GameObject weaponObj;
     Pistol pistol;
 
+    public GameObject Inventory { get { return inventory; } }
     public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
-
-    List<GameObject> items;
-    public List<GameObject> ItemList { get { return items; } }
 
     public Pistol Pistol { get {  return pistol; } }
 
@@ -35,7 +33,6 @@ public class PlayerManager : MonoBehaviour
 
     void Awake()
     {
-        items = new List<GameObject>();
         input = GetComponent<StarterAssetsInputs>();
         controller = GetComponent<ThirdPersonController>();
         anim = GetComponent<Animator>();
@@ -64,11 +61,6 @@ public class PlayerManager : MonoBehaviour
         }
 
         AimCheck();
-    }
-
-    public void AddItem(GameObject item)
-    {
-        items.Add(item);
     }
 
     public void ActiveUI()

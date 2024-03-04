@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,14 +13,13 @@ public class Inventory : MonoBehaviour
     [SerializeField] Button useBtn;
 
     GameObject playerObj;
-    GameObject selectedItem;
-    List<GameObject> items;
+    int remainedSlotCnt;
 
     void Start()
     {
         playerObj = FindObjectOfType<PlayerManager>().gameObject;
-        items = playerObj.GetComponent<PlayerManager>().ItemList;
         slots = slotParent.GetComponentsInChildren<Slot>();
+        remainedSlotCnt = slots.Length;
     }
 
     void Update()
@@ -40,31 +37,23 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(GameObject _item)
     {
-        if (items.Count < slots.Length)
+        for (int i = 0; i < slots.Length; i++)
         {
-            items.Add(_item);
-
-            for (int i = 0; i < slots.Length; i++)
+            if (slots[i].Item == null)
             {
-                if (slots[i].Item == null)
-                {
-                    slots[i].Item = _item;
-                    slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
-                    return;
-                }
+                slots[i].Item = _item;
+                slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
+                remainedSlotCnt--;
+                return;
             }
         }
-        else
-        {
-            print("Inventory is full!");
-        }
+
+        Debug.Log("Inventory is full!");
     }
 
     public void SetSelectedItem(GameObject _itemObj, Slot _selectedSlot)
     {
-        selectedItem = _itemObj;
-
-        IItem item = selectedItem.GetComponent<IItem>();
+        IItem item = _itemObj.GetComponent<IItem>();
 
         selectedItemSlot.Item = _itemObj;
         selectedItemDescription.text = item.GetItemName() + " : " + item.GetItemDescription();
@@ -83,15 +72,28 @@ public class Inventory : MonoBehaviour
     {
         _item.Use(playerObj);
 
-        // 사용할 수 없는 아이템이라면
+        // 사용할 수 있는 아이템만 사용처리한다.
         if (_item.IsUsable())
         {
             _slot.Item = null;
             selectedItemSlot.Item = null;
             selectedItemDescription.text = "";
-            items.Remove(selectedItem);
+            remainedSlotCnt++;
         }
     }
+
+    public void PassItemToNPC(GameObject _requestItemObj)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].Item == _requestItemObj)
+            {
+                slots[i].Item = null;
+                remainedSlotCnt++;
+            }
+        }
+    }
+
 
     public void SetIsShowingInven(bool _isShowing)
     {
@@ -106,11 +108,16 @@ public class Inventory : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1200);
+
+            // 인벤토리를 끝때마다 선택된 아이템 초기화
+            selectedItemSlot.Item = null;
+            selectedItemDescription.text = "";
+            useBtn.onClick.RemoveAllListeners();
         }
     }
 
     public int GetRemainedSlots()
     {
-        return slots.Length - items.Count;
+        return remainedSlotCnt;
     }
 }
