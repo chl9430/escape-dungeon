@@ -37,24 +37,26 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    public GameObject ActiveObj(int index)
+    public GameObject ActiveObj(int _index, Vector3 _pos)
     {
         GameObject obj = null;
 
-        for (int i = 0; i < objPools[index].Count; i++)
+        for (int i = 0; i < objPools[_index].Count; i++)
         {
             // 풀 안의 특정 오브젝트가 비활성화 되어있는지 확인한다.
-            if (!objPools[index][i].activeInHierarchy)
+            if (!objPools[_index][i].activeInHierarchy)
             {
-                obj = objPools[index][i];
+                obj = objPools[_index][i];
+                obj.transform.position = _pos;
                 obj.SetActive(true);
                 return obj;
             }
         }
 
         // 풀 안의 모든 오브젝트가 사용중이라면(활성화 상태) 새로 만들어 풀에 추가한다.
-        obj = Instantiate(prefabs[index]);
-        objPools[index].Add(obj);
+        obj = Instantiate(prefabs[_index]);
+        objPools[_index].Add(obj);
+        obj.transform.position = _pos;
         obj.SetActive(true);
 
         return obj;

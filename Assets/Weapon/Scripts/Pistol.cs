@@ -52,8 +52,7 @@ public class Pistol : MonoBehaviour
     public void ReloadClip()
     {
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
-        GameObject clipFX = PoolManager.instance.ActiveObj(2);
-        GameManager.instance.SetObjPosition(clipFX, weaponClipPoint);
+        PoolManager.instance.ActiveObj(2, weaponClipPoint.position);
 
         InitBullet();
     }
@@ -76,13 +75,11 @@ public class Pistol : MonoBehaviour
         Vector3 aim = (targetPosition - bulletPoint.position).normalized;
 
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
-        GameObject flashFX = PoolManager.instance.ActiveObj(0);
-        GameManager.instance.SetObjPosition(flashFX, bulletPoint);
+        GameObject flashFX = PoolManager.instance.ActiveObj(0, bulletPoint.position);
         flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
 
         // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
-        GameObject caseFX = PoolManager.instance.ActiveObj(1);
-        GameManager.instance.SetObjPosition(caseFX, bulletCasePoint);
+        PoolManager.instance.ActiveObj(1, bulletCasePoint.position);
 
         // 레이캐스트의 충돌
         if (enemy != null && enemy.EnemyCurrentHP > 0)

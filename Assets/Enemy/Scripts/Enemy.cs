@@ -18,9 +18,12 @@ public class Enemy : MonoBehaviour
     Animator animator;
     CapsuleCollider enemyCollider;
 
+    PlayerManager playerManager;
     float enemyCurrentHP = 0;
     float targetDelay = 0.5f;
     bool isDead = false;
+
+    public PlayerManager PlayerManager { set { playerManager = value; } }
 
     public float EnemyCurrentHP { get { return enemyCurrentHP; } }
 
@@ -33,7 +36,7 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
 
-        targetPlayer = GameObject.FindWithTag("Player");
+        targetPlayer = FindObjectOfType<PlayerManager>().gameObject;
 
         InitEnemyHP();
     }
@@ -71,10 +74,10 @@ public class Enemy : MonoBehaviour
             agent.destination = targetPlayer.transform.position;
             transform.LookAt(targetPlayer.transform.position);
 
-            bool isRange = Vector3.Distance(transform.position, targetPlayer.transform.position) <= agent.stoppingDistance;
+            // bool isRange = Vector3.Distance(transform.position, targetPlayer.transform.position) <= agent.stoppingDistance;
 
             // 사정거리 안에 플레이어가 있다면
-            if (isRange)
+            if (playerManager)
             {
                 animator.SetTrigger("Attack");
             }
@@ -111,5 +114,15 @@ public class Enemy : MonoBehaviour
     public void GetDamaged(int damage)
     {
         enemyCurrentHP -= damage;
+    }
+
+    // 몬스터의 공격 애니메이션 이벤트에서 호출된다.
+    public void Attack()
+    {
+        // 플레이어가 범위 안에 있다면
+        if (playerManager)
+        {
+            playerManager.GetDamaged(10, transform.position);
+        }
     }
 }

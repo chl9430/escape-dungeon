@@ -106,6 +106,9 @@ namespace StarterAssets
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
 
+        // 플레이어
+        private PlayerManager playerManager;
+
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
@@ -122,10 +125,6 @@ namespace StarterAssets
             }
         }
 
-        public bool isAimMove = false;
-        public bool isReload = false;
-
-
         private void Awake()
         {
             // get a reference to our main camera
@@ -133,6 +132,9 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+
+            // 플레이어 가져오기
+            playerManager = GetComponent<PlayerManager>();
         }
 
         private void Start()
@@ -157,12 +159,6 @@ namespace StarterAssets
 
         private void Update()
         {
-            // 플레이어가 움직일 수 없는 상태라면 Update함수는 실행되지 않는다.
-            if (!GameManager.instance.canPlayerMove)
-            {
-                return;
-            }
-
             _hasAnimator = TryGetComponent(out _animator);
 
             JumpAndGravity();
@@ -222,14 +218,14 @@ namespace StarterAssets
 
         private void Move()
         {
+            // 플레이어가 공격 받는 모션을 취하는 도중에는 이동인풋은 받지만, 이동시키지는 않는다.
+            if (playerManager.IsInvincible)
+            {
+                return;
+            }
+
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
-
-            // 조준 상태일때 플레이어의 걷는 속도를 일반속도로 설정
-            if (isAimMove || isReload)
-            {
-                targetSpeed = MoveSpeed;
-            }
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -278,7 +274,7 @@ namespace StarterAssets
                 // rotate to face input direction relative to camera position
 
                 // 조준 상태가 아닐때만 플레이어를 회전시킨다.
-                if (!isAimMove)
+                if (!playerManager.IsAiming)
                 {
                     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 }

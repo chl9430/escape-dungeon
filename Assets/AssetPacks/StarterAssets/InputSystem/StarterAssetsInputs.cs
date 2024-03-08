@@ -1,3 +1,4 @@
+// using System.Diagnostics;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -27,23 +28,43 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+        // 플레이어
+        PlayerManager playerManager;
+
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+        void Awake()
+        {
+            // 플레이어 가져오기
+            playerManager = GetComponent<PlayerManager>();
+        }
+
+        public void OnMove(InputValue value)
 		{
-			MoveInput(value.Get<Vector2>());
+            if (!playerManager.IsTalking
+				&& !playerManager.IsInventory)
+            {
+                MoveInput(value.Get<Vector2>());
+			}
 		}
 
 		public void OnLook(InputValue value)
 		{
-			if(cursorInputForLook)
+			if(!playerManager.IsTalking
+                && !playerManager.IsInventory)
 			{
-				LookInput(value.Get<Vector2>());
+				if (cursorInputForLook)
+				{
+                    LookInput(value.Get<Vector2>());
+                }
 			}
 		}
 
 		public void OnJump(InputValue value)
 		{
-			if (GameManager.instance.canPlayerMove)
+			if (!playerManager.IsTalking
+                && !playerManager.IsInventory
+                && !playerManager.IsReloading
+                && !playerManager.IsInvincible)
 			{
 				JumpInput(value.isPressed);
 			}
@@ -51,22 +72,44 @@ namespace StarterAssets
 
 		public void OnSprint(InputValue value)
 		{
-			SprintInput(value.isPressed);
+			if (!playerManager.IsTalking
+                && !playerManager.IsInventory
+                && !playerManager.IsAiming
+                && !playerManager.IsReloading
+                && !playerManager.IsInvincible)
+			{
+				SprintInput(value.isPressed);
+			}
 		}
 
         public void OnAim(InputValue value)
         {
-            AimInput(value.isPressed);
+			if (!playerManager.IsTalking
+                && !playerManager.IsInventory
+                && !playerManager.IsReloading
+                && !playerManager.IsInvincible)
+			{
+				AimInput(value.isPressed);
+			}
         }
 
         public void OnShoot(InputValue value)
         {
-            ShootInput(value.isPressed);
+			if (!playerManager.IsTalking
+                && !playerManager.IsInventory
+                && !playerManager.IsReloading
+                && !playerManager.IsInvincible)
+			{
+				ShootInput(value.isPressed);
+			}
         }
 
         public void OnReload(InputValue value)
         {
-			if (GameManager.instance.canPlayerMove)
+            if (!playerManager.IsTalking
+                && !playerManager.IsInventory
+                && !playerManager.IsReloading
+                && !playerManager.IsInvincible)
 			{
                 ReloadInput(value.isPressed);
             }
@@ -74,7 +117,7 @@ namespace StarterAssets
 
         public void OnTalk(InputValue value)
         {
-			if (!GameManager.instance.isWatching)
+			if (!playerManager.IsInventory)
 			{
                 TalkInput(value.isPressed);
             }
@@ -82,21 +125,20 @@ namespace StarterAssets
 
         public void OnShowInventory(InputValue value)
         {
-            if (GameManager.instance.canPlayerMove)
-            {
-                ShowInventoryInput(value.isPressed);
-            }
+			if (!playerManager.IsTalking)
+			{
+				ShowInventoryInput(value.isPressed);
+			}
         }
 
         public void OnShowQuest(InputValue value)
         {
-            if (GameManager.instance.canPlayerMove)
+            if (!playerManager.IsTalking)
             {
                 ShowQuestInput(value.isPressed);
             }
         }
 #endif
-
 
         public void MoveInput(Vector2 newMoveDirection)
 		{
@@ -158,5 +200,4 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 	}
-
 }

@@ -1,25 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
-    //[Header("Bullet")]
-    //[SerializeField] Transform bulletPoint;
-    //[SerializeField] Text bulletText;
-    //int maxBullet = 30;
-    //int currentBullet = 0;
-
-    //[Header("Weapon FX")]
-    //[SerializeField] GameObject weaponFlashFX;
-    //[SerializeField] Transform bulletCasePoint;
-    //[SerializeField] GameObject bulletCaseFX;
-    //[SerializeField] Transform weaponClipPoint;
-    //[SerializeField] GameObject weaponClipFX;
 
     [Header("Enemy")]
     [SerializeField] GameObject[] spawnPoint;
@@ -36,7 +23,6 @@ public class GameManager : MonoBehaviour
     public bool isWatching = false;
     public bool canPlayerMove = false;
 
-    // Start is called before the first frame update
     void Start()
     {
         // 어디서든 접근 가능한 정적 변수
@@ -50,12 +36,9 @@ public class GameManager : MonoBehaviour
         //cut = GetComponent<PlayableDirector>();
         //cut.Play();
 
-        // InitBullet();
-
         StartCoroutine(EnemySpawn());
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isWatching || playerManager.IsTalking)
@@ -66,64 +49,13 @@ public class GameManager : MonoBehaviour
         {
             canPlayerMove = true;
         }
-
-        //bulletText.text = currentBullet + " / " + maxBullet;
-    }
-
-    //public void Shooting(Vector3 targetPosition, Enemy enemy, AudioSource weaponSound, AudioClip shootingSound)
-    //{
-    //    if (currentBullet <= 0)
-    //        return;
-
-    //    currentBullet -= 1;
-
-    //    weaponSound.clip = shootingSound;
-    //    weaponSound.Play();
-
-    //    Vector3 aim = (targetPosition - bulletPoint.position).normalized;
-
-    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 총구 화염 이펙트가 있는지 확인한다.
-    //    GameObject flashFX = PoolManager.instance.ActiveObj(0);
-    //    SetObjPosition(flashFX, bulletPoint);
-    //    flashFX.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
-
-    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 탄피 이펙트가 있는지 확인한다.
-    //    GameObject caseFX = PoolManager.instance.ActiveObj(1);
-    //    SetObjPosition(caseFX, bulletCasePoint);
-
-    //    // 레이캐스트의 충돌
-    //    if (enemy != null && enemy.EnemyCurrentHP > 0)
-    //    {
-    //        enemy.GetDamaged(1);
-    //    }
-    //}
-
-    //// 탄창이 바뀌고 탄창이 채워지는 함수
-    //public void ReloadClip()
-    //{
-    //    // 오브젝트 풀에서 사용 가능한(비활성화 상태) 클립 이펙트가 있는지 확인한다.
-    //    GameObject clipFX = PoolManager.instance.ActiveObj(2);
-    //    SetObjPosition(clipFX, weaponClipPoint);
-
-    //    InitBullet();
-    //}
-
-    //void InitBullet()
-    //{
-    //    currentBullet = maxBullet;
-    //}
-
-    public void SetObjPosition(GameObject obj, Transform targetTransform)
-    {
-        obj.transform.position = targetTransform.position;
     }
 
     IEnumerator EnemySpawn()
     {
         if (PoolManager.instance != null)
         {
-            GameObject enemy = PoolManager.instance.ActiveObj(3);
-            SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
+            PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
         }
 
         yield return new WaitForSeconds(10f);
@@ -145,14 +77,13 @@ public class GameManager : MonoBehaviour
     {
         isWatching = false;
         PlayBGMSound();
-        GameObject enemy = PoolManager.instance.ActiveObj(3);
-        SetObjPosition(enemy, spawnPoint[Random.Range(0, spawnPoint.Length)].transform);
+        GameObject enemy = PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
         // StartCoroutine(EnemySpawn());
     }
 
-    public void ShowGuide(string guideText)
+    public void ShowGuide(string _guideText)
     {
-        guideObj.transform.GetComponentInChildren<Text>().text = guideText;
+        guideObj.transform.GetComponentInChildren<Text>().text = _guideText;
         guideObj.SetActive(true);
     }
 

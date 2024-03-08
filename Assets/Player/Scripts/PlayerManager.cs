@@ -1,10 +1,18 @@
 using Cinemachine;
 using StarterAssets;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
+    [Header("HP")]
+    [SerializeField] GameObject HPBarObj;
+    float currentHP;
+    float maxHP;
+    bool isInvincible;
 
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
@@ -19,25 +27,32 @@ public class PlayerManager : MonoBehaviour
     [Header("Weapon")]
     GameObject weaponObj;
     Pistol pistol;
+    bool isReloading;
+    bool isAiming;
 
     public GameObject Inventory { get { return inventory; } }
     public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
+    public bool IsInventory { get { return isInventory; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
+    public bool IsAiming { get { return isAiming; } }
+    public bool IsReloading { get { return isReloading; } }
+    public bool IsInvincible { get { return isInvincible; } }
 
     public Pistol Pistol { get {  return pistol; } }
 
     StarterAssetsInputs input;
-    ThirdPersonController controller;
     Animator anim;
     GameObject scanedNPCObj;
 
     void Awake()
     {
         input = GetComponent<StarterAssetsInputs>();
-        controller = GetComponent<ThirdPersonController>();
         anim = GetComponent<Animator>();
         weaponObj = FindObjectOfType<Pistol>().gameObject;
         pistol = weaponObj.GetComponent<Pistol>();
+
+        currentHP = 100;
+        maxHP = 100;
     }
 
     void Start()
@@ -48,39 +63,59 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         Talk();
+        
         ShowInventory();
+        
         ShowQuestBox();
-        ActiveUI();
+        
+        AimCheck();
 
-        // 컷신이 실행중일 경우
-        if (!GameManager.instance.canPlayerMove)
+        // 플레이어를 애니메이션 진행도에 따라 무적상태로 한들거나 해제한다.
+        CheckInvincible();
+
+        HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
+
+        // 상태에 따른 초기화 할 항목들을 초기화한다.
+        if (isTalking || isInventory)
         {
-            pistol.SetAim(false);
-            controller.isAimMove = false;
-            return;
+            input.move = Vector2.zero;
+            input.look = Vector2.zero;
+            input.sprint = false;
+            input.aim = false;
+            input.shoot = false;
         }
 
-        AimCheck();
+        if (isAiming)
+        {
+            input.sprint = false;
+        }
+
+        if (isReloading)
+        {
+            input.sprint = false;
+            input.aim = false;
+            input.shoot = false;
+        }
+
+        if (isInvincible)
+        {
+            input.sprint = false;
+            input.aim = false;
+            input.shoot = false;
+        }
     }
 
-    public void ActiveUI()
+    void CheckInvincible()
     {
-        if (isInventory)
-        {
-            inventory.GetComponent<Inventory>().SetIsShowingInven(true);
-        }
-        else
-        {
-            inventory.GetComponent<Inventory>().SetIsShowingInven(false);
-        }
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
 
-        if (isQuestBox)
+        if (stateInfo.IsName("Damage") && stateInfo.normalizedTime < 1.0f)
         {
-            questBox.SetActive(true);
+            isInvincible = true;
         }
         else
         {
-            questBox.SetActive(false);
+            isInvincible = false;
         }
     }
 
@@ -93,10 +128,12 @@ public class PlayerManager : MonoBehaviour
             if (isQuestBox == false)
             {
                 isQuestBox = true;
+                questBox.SetActive(true);
             }
             else
             {
                 isQuestBox = false;
+                questBox.SetActive(false);
             }
         }
     }
@@ -110,10 +147,12 @@ public class PlayerManager : MonoBehaviour
             if (isInventory == false)
             {
                 isInventory = true;
+                inventory.GetComponent<Inventory>().SetIsShowingInven(true);
             }
             else
             {
                 isInventory = false;
+                inventory.GetComponent<Inventory>().SetIsShowingInven(false);
             }
         }
     }
@@ -138,20 +177,17 @@ public class PlayerManager : MonoBehaviour
         {
             input.reload = false;
 
-            if (controller.isReload)
-            {
-                return;
-            }
-
             pistol.SetAim(false);
-            controller.isAimMove = false;
+
+            isAiming = false;
             anim.SetLayerWeight(1, 1);
             anim.SetTrigger("Reload");
-            controller.isReload = true;
+            isReloading = true;
+            return;
         }
 
         // 재장전 상태라면 조준을 할 수 없게 한다.
-        if (controller.isReload)
+        if (isReloading)
         {
             return;
         }
@@ -161,7 +197,7 @@ public class PlayerManager : MonoBehaviour
         {
             // 에임 카메라로 전환
             pistol.SetAim(true);
-            controller.isAimMove = true;
+            isAiming = true;
 
             anim.SetLayerWeight(1, 1);
 
@@ -194,7 +230,7 @@ public class PlayerManager : MonoBehaviour
         else
         {
             pistol.SetAim(false);
-            controller.isAimMove = false;
+            isAiming = false;
             anim.SetLayerWeight(1, 0);
             anim.SetBool("Shoot", false);
         }
@@ -214,9 +250,22 @@ public class PlayerManager : MonoBehaviour
     // 재장전 상태를 해제하는 함수(재장전 애니메이션의 끝 부분에 호출된다.)
     public void Reload()
     {
-        controller.isReload = false;
+        isReloading = false;
         anim.SetLayerWeight(1, 0);
         pistol.PlayReloadingSound(2);
+    }
+
+    public void GetDamaged(float _damage, Vector3 _monPos)
+    {
+        if (!isInvincible)
+        {
+            isInvincible = true;
+            GetComponent<CharacterController>().Move(20f * Time.deltaTime * Vector3.back);
+            transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
+            anim.SetLayerWeight(1, 0);
+            anim.SetTrigger("Damage");
+            currentHP -= _damage;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -226,6 +275,12 @@ public class PlayerManager : MonoBehaviour
             GameManager.instance.ShowGuide("NPC와 대화하려면 T버튼을 누르십시오.");
             scanedNPCObj = other.gameObject;
         }
+
+        if (other.gameObject.CompareTag("AttackRange"))
+        {
+            Enemy enemy = other.GetComponentInParent<Enemy>();
+            enemy.PlayerManager = GetComponent<PlayerManager>();
+        }
     }
 
     void OnTriggerExit(Collider other)
@@ -234,6 +289,12 @@ public class PlayerManager : MonoBehaviour
         {
             GameManager.instance.HideGuide();
             scanedNPCObj = null;
+        }
+
+        if (other.gameObject.CompareTag("AttackRange"))
+        {
+            Enemy enemy = other.GetComponentInParent<Enemy>();
+            enemy.PlayerManager = null;
         }
     }
 }
