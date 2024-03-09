@@ -12,8 +12,7 @@ public class PoolManager : MonoBehaviour
     
     int poolSize = 1;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         instance = this;
 

@@ -197,6 +197,12 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
+            // 카메라 회전 제어
+            if (playerManager.IsInventory || playerManager.IsTalking)
+            {
+                return;
+            }
+
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
@@ -218,14 +224,14 @@ namespace StarterAssets
 
         private void Move()
         {
-            // 플레이어가 공격 받는 모션을 취하는 도중에는 이동인풋은 받지만, 이동시키지는 않는다.
-            if (playerManager.IsInvincible)
-            {
-                return;
-            }
-
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+
+            // // 플레이어 이동(달리기) 제어
+            if (playerManager.IsInventory || playerManager.IsTalking || playerManager.IsDamaged)
+            {
+                targetSpeed = 0f;
+            }
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -273,8 +279,9 @@ namespace StarterAssets
 
                 // rotate to face input direction relative to camera position
 
-                // 조준 상태가 아닐때만 플레이어를 회전시킨다.
-                if (!playerManager.IsAiming)
+                // 플레이어 회전 제어
+                if (!playerManager.IsAiming && !playerManager.IsInventory 
+                    && !playerManager.IsTalking && !playerManager.IsDamaged)
                 {
                     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 }
@@ -297,6 +304,14 @@ namespace StarterAssets
 
         private void JumpAndGravity()
         {
+            // 플레이어 점프 제어
+            if (playerManager.IsTalking
+                || playerManager.IsInventory
+                || playerManager.IsDamaged)
+            {
+                _input.jump = false;
+            }
+
             if (Grounded)
             {
                 // reset the fall timeout timer

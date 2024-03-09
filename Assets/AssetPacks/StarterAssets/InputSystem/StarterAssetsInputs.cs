@@ -1,4 +1,4 @@
-// using System.Diagnostics;
+using System.Diagnostics;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -40,68 +40,35 @@ namespace StarterAssets
 
         public void OnMove(InputValue value)
 		{
-            if (!playerManager.IsTalking
-				&& !playerManager.IsInventory)
-            {
-                MoveInput(value.Get<Vector2>());
-			}
-		}
+            MoveInput(value.Get<Vector2>());
+        }
 
 		public void OnLook(InputValue value)
 		{
-			if(!playerManager.IsTalking
-                && !playerManager.IsInventory)
-			{
-				if (cursorInputForLook)
-				{
-                    LookInput(value.Get<Vector2>());
-                }
-			}
-		}
+            if (cursorInputForLook)
+            {
+                LookInput(value.Get<Vector2>());
+            }
+        }
 
-		public void OnJump(InputValue value)
+        public void OnJump(InputValue value)
 		{
-			if (!playerManager.IsTalking
-                && !playerManager.IsInventory
-                && !playerManager.IsReloading
-                && !playerManager.IsInvincible)
-			{
-				JumpInput(value.isPressed);
-			}
-		}
+            JumpInput(value.isPressed);
+        }
 
 		public void OnSprint(InputValue value)
 		{
-			if (!playerManager.IsTalking
-                && !playerManager.IsInventory
-                && !playerManager.IsAiming
-                && !playerManager.IsReloading
-                && !playerManager.IsInvincible)
-			{
-				SprintInput(value.isPressed);
-			}
-		}
+            SprintInput(value.isPressed);
+        }
 
         public void OnAim(InputValue value)
         {
-			if (!playerManager.IsTalking
-                && !playerManager.IsInventory
-                && !playerManager.IsReloading
-                && !playerManager.IsInvincible)
-			{
-				AimInput(value.isPressed);
-			}
+            AimInput(value.isPressed);
         }
 
         public void OnShoot(InputValue value)
         {
-			if (!playerManager.IsTalking
-                && !playerManager.IsInventory
-                && !playerManager.IsReloading
-                && !playerManager.IsInvincible)
-			{
-				ShootInput(value.isPressed);
-			}
+            ShootInput(value.isPressed);
         }
 
         public void OnReload(InputValue value)
@@ -110,25 +77,25 @@ namespace StarterAssets
                 && !playerManager.IsInventory
                 && !playerManager.IsReloading
                 && !playerManager.IsInvincible)
-			{
+            {
                 ReloadInput(value.isPressed);
             }
         }
 
         public void OnTalk(InputValue value)
         {
-			if (!playerManager.IsInventory)
-			{
+            if (!playerManager.IsInventory)
+            {
                 TalkInput(value.isPressed);
             }
         }
 
         public void OnShowInventory(InputValue value)
         {
-			if (!playerManager.IsTalking)
-			{
-				ShowInventoryInput(value.isPressed);
-			}
+            if (!playerManager.IsTalking)
+            {
+                ShowInventoryInput(value.isPressed);
+            }
         }
 
         public void OnShowQuest(InputValue value)

@@ -3,15 +3,17 @@ using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
     [Header("HP")]
     [SerializeField] GameObject HPBarObj;
+    [SerializeField] GameObject damagedEffectObj;
     float currentHP;
     float maxHP;
+    bool isDamaged;
     bool isInvincible;
 
     [Header("Inventory")]
@@ -34,9 +36,10 @@ public class PlayerManager : MonoBehaviour
     public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
     public bool IsInventory { get { return isInventory; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
-    public bool IsAiming { get { return isAiming; } }
+    public bool IsAiming { get { return isAiming; } set { isAiming = value; } }
     public bool IsReloading { get { return isReloading; } }
     public bool IsInvincible { get { return isInvincible; } }
+    public bool IsDamaged { get { return isDamaged; } }
 
     public Pistol Pistol { get {  return pistol; } }
 
@@ -63,59 +66,42 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         Talk();
-        
+
         ShowInventory();
-        
+
         ShowQuestBox();
-        
+
         AimCheck();
 
-        // 플레이어를 애니메이션 진행도에 따라 무적상태로 한들거나 해제한다.
-        CheckInvincible();
-
         HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
-
-        // 상태에 따른 초기화 할 항목들을 초기화한다.
-        if (isTalking || isInventory)
-        {
-            input.move = Vector2.zero;
-            input.look = Vector2.zero;
-            input.sprint = false;
-            input.aim = false;
-            input.shoot = false;
-        }
-
-        if (isAiming)
-        {
-            input.sprint = false;
-        }
-
-        if (isReloading)
-        {
-            input.sprint = false;
-            input.aim = false;
-            input.shoot = false;
-        }
-
-        if (isInvincible)
-        {
-            input.sprint = false;
-            input.aim = false;
-            input.shoot = false;
-        }
     }
 
-    void CheckInvincible()
+    // 데미지 애니메이션 마지막에 호출
+    public void UnsetIsDamaged()
     {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        isDamaged = false;
+    }
 
-        if (stateInfo.IsName("Damage") && stateInfo.normalizedTime < 1.0f)
+    IEnumerator SetInvincibleState()
+    {
+        isInvincible = true;
+        isDamaged = true;
+        damagedEffectObj.GetComponent<PostProcessVolume>().weight = 1;
+        anim.SetTrigger("Damage");
+
+        yield return new WaitForSeconds(3f);
+
+        damagedEffectObj.GetComponent<PostProcessVolume>().weight = 0;
+        isInvincible = false;
+    }
+
+    public void GetDamaged(float _damage, Vector3 _monPos)
+    {
+        if (!isInvincible)
         {
-            isInvincible = true;
-        }
-        else
-        {
-            isInvincible = false;
+            StartCoroutine(SetInvincibleState());
+            transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
+            currentHP -= _damage;
         }
     }
 
@@ -193,7 +179,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         // 등록된 aim 버튼을 눌렀을 때
-        if (input.aim)
+        if (input.aim && !isInventory && !isTalking && !isReloading && !isInvincible)
         {
             // 에임 카메라로 전환
             pistol.SetAim(true);
@@ -236,36 +222,25 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    // 재장전 애니메이션 초반에 호출
     public void ReloadWeaponClip()
     {
         pistol.ReloadClip();
         pistol.PlayReloadingSound(0);
     }
 
+    // 재장전 애니메이션 중반에 호출
     public void ReloadInsertClip()
     {
         pistol.PlayReloadingSound(1);
     }
 
-    // 재장전 상태를 해제하는 함수(재장전 애니메이션의 끝 부분에 호출된다.)
+    // 재장전 애니메이션 후반에 호출
     public void Reload()
     {
         isReloading = false;
         anim.SetLayerWeight(1, 0);
         pistol.PlayReloadingSound(2);
-    }
-
-    public void GetDamaged(float _damage, Vector3 _monPos)
-    {
-        if (!isInvincible)
-        {
-            isInvincible = true;
-            GetComponent<CharacterController>().Move(20f * Time.deltaTime * Vector3.back);
-            transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
-            anim.SetLayerWeight(1, 0);
-            anim.SetTrigger("Damage");
-            currentHP -= _damage;
-        }
     }
 
     void OnTriggerEnter(Collider other)
