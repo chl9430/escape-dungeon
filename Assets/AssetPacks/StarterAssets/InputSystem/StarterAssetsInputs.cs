@@ -75,8 +75,7 @@ namespace StarterAssets
         {
             if (!playerManager.IsTalking
                 && !playerManager.IsInventory
-                && !playerManager.IsReloading
-                && !playerManager.IsInvincible)
+                && !playerManager.IsReloading)
             {
                 ReloadInput(value.isPressed);
             }

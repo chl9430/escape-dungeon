@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float enemyMaxHP = 5;
 
     QuestManager questManager;
-    GameObject targetPlayer;
+    GameObject targetPlayerObj;
 
     NavMeshAgent agent;
     Animator animator;
@@ -36,7 +36,10 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
 
-        targetPlayer = FindObjectOfType<PlayerManager>().gameObject;
+        if (FindObjectOfType<PlayerManager>().IsAlive)
+        {
+            targetPlayerObj = FindObjectOfType<PlayerManager>().gameObject;
+        }
 
         InitEnemyHP();
     }
@@ -60,7 +63,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if (targetPlayer != null)
+        if (targetPlayerObj != null)
         {
             float maxDelay = 0.5f;
             targetDelay += Time.deltaTime;
@@ -71,8 +74,8 @@ public class Enemy : MonoBehaviour
                 return;
             }
 
-            agent.destination = targetPlayer.transform.position;
-            transform.LookAt(targetPlayer.transform.position);
+            agent.destination = targetPlayerObj.transform.position;
+            transform.LookAt(targetPlayerObj.transform.position);
 
             // bool isRange = Vector3.Distance(transform.position, targetPlayer.transform.position) <= agent.stoppingDistance;
 
@@ -122,7 +125,7 @@ public class Enemy : MonoBehaviour
         // 플레이어가 범위 안에 있다면
         if (playerManager)
         {
-            playerManager.GetDamaged(10, transform.position);
+            playerManager.GetDamaged(30, transform.position);
         }
     }
 }

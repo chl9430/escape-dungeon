@@ -1,8 +1,7 @@
-using Cinemachine;
 using StarterAssets;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 
@@ -15,6 +14,7 @@ public class PlayerManager : MonoBehaviour
     float maxHP;
     bool isDamaged;
     bool isInvincible;
+    bool isDead;
 
     [Header("Inventory")]
     [SerializeField] GameObject inventory;
@@ -40,6 +40,16 @@ public class PlayerManager : MonoBehaviour
     public bool IsReloading { get { return isReloading; } }
     public bool IsInvincible { get { return isInvincible; } }
     public bool IsDamaged { get { return isDamaged; } }
+    public bool IsAlive
+    {
+        get
+        {
+            if (isDead)
+                return false;
+            else
+                return true;
+        }
+    }
 
     public Pistol Pistol { get {  return pistol; } }
 
@@ -97,11 +107,31 @@ public class PlayerManager : MonoBehaviour
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible)
+        if (!isInvincible && !isDead)
         {
-            StartCoroutine(SetInvincibleState());
-            transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
-            currentHP -= _damage;
+            // 재장전 상태라면
+            if (isReloading)
+            {
+                // 재장전 상태롤 해제한다.
+                anim.SetLayerWeight(1, 0);
+                isReloading = false;
+            }
+
+            // 남은 체력이 충분하다면
+            if (currentHP > _damage)
+            {
+                StartCoroutine(SetInvincibleState());
+                transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
+                currentHP -= _damage;
+            }
+            else // 남은 체력이 충분하지 않다면
+            {
+                isDead = true;
+                anim.SetTrigger("Dead");
+                currentHP -= _damage;
+                GetComponent<PlayerInput>().enabled = false;
+                GameManager.instance.SetGameOverUI();
+            }
         }
     }
 

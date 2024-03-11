@@ -1,8 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,15 +18,24 @@ public class GameManager : MonoBehaviour
     [Header("Guide")]
     [SerializeField] GameObject guideObj;
 
+    [Header("Game Over")]
+    [SerializeField] GameObject gameOverUIObj;
+
     PlayerManager playerManager;
     PlayableDirector cut;
     public bool isWatching = false;
-    public bool canPlayerMove = false;
 
     void Awake()
     {
         // 어디서든 접근 가능한 정적 변수
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -42,16 +51,26 @@ public class GameManager : MonoBehaviour
         StartCoroutine(EnemySpawn());
     }
 
-    void Update()
+    public void LoadMainMenuScene()
     {
-        if (isWatching || playerManager.IsTalking)
-        {
-            canPlayerMove = false;
-        }
-        else
-        {
-            canPlayerMove = true;
-        }
+        SceneManager.LoadScene(0);
+    }
+
+    public void RestartGame()
+    {
+        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    public void SetGameOverUI()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        gameOverUIObj.SetActive(true);
     }
 
     IEnumerator EnemySpawn()
