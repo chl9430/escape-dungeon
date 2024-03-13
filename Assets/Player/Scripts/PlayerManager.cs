@@ -284,7 +284,7 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.CompareTag("AttackRange"))
         {
             Enemy enemy = other.GetComponentInParent<Enemy>();
-            enemy.PlayerManager = GetComponent<PlayerManager>();
+            enemy.CanAttack = true;
         }
     }
 
@@ -299,7 +299,7 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.CompareTag("AttackRange"))
         {
             Enemy enemy = other.GetComponentInParent<Enemy>();
-            enemy.PlayerManager = null;
+            enemy.CanAttack = false;
         }
     }
 }

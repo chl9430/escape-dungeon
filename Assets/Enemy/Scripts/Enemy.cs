@@ -11,23 +11,25 @@ public class Enemy : MonoBehaviour
     [SerializeField] string monName = "";
     [SerializeField] float enemyMaxHP = 5;
 
+    [SerializeField] float recogPlayerRange = 5;
+    [SerializeField] float moveRange = 10;
+
     QuestManager questManager;
     GameObject targetPlayerObj;
 
     NavMeshAgent agent;
     Animator animator;
     CapsuleCollider enemyCollider;
-
-    PlayerManager playerManager;
-    float enemyCurrentHP = 0;
+    Vector3 initialPos;
     float targetDelay = 0.5f;
-    bool isDead = false;
+    float enemyCurrentHP = 0;
 
-    public PlayerManager PlayerManager { set { playerManager = value; } }
+    bool isDead = false;
+    bool canAttack = false;
+    public bool CanAttack { set { canAttack = value; } }
 
     public float EnemyCurrentHP { get { return enemyCurrentHP; } }
 
-    // Start is called before the first frame update
     void Start()
     {
         questManager = FindObjectOfType<QuestManager>();
@@ -35,6 +37,8 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
+
+        initialPos = transform.position;
 
         if (FindObjectOfType<PlayerManager>().IsAlive)
         {
@@ -44,7 +48,6 @@ public class Enemy : MonoBehaviour
         InitEnemyHP();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isDead)
@@ -63,33 +66,44 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if (targetPlayerObj != null)
+        // 적이 본인 영역 내에 있다면
+        if (Vector3.Distance(initialPos, transform.position) <= moveRange)
         {
-            float maxDelay = 0.5f;
-            targetDelay += Time.deltaTime;
-
-            // 플레이어(타겟)의 위치를 인식하기 전, 잠깐의 딜레이를 준다.
-            if (targetDelay < maxDelay)
+            // 플레이어가 인지 범위 내에 있는 지 확인한다.
+            if (Vector3.Distance(transform.position, targetPlayerObj.transform.position) <= recogPlayerRange)
             {
-                return;
-            }
+                float maxDelay = 0.5f;
+                targetDelay += Time.deltaTime;
 
-            agent.destination = targetPlayerObj.transform.position;
-            transform.LookAt(targetPlayerObj.transform.position);
+                // 플레이어(타겟)의 위치를 인식하기 전, 잠깐의 딜레이를 준다.
+                if (targetDelay < maxDelay)
+                {
+                    return;
+                }
 
-            // bool isRange = Vector3.Distance(transform.position, targetPlayer.transform.position) <= agent.stoppingDistance;
+                agent.destination = targetPlayerObj.transform.position;
+                transform.LookAt(targetPlayerObj.transform.position);
 
-            // 사정거리 안에 플레이어가 있다면
-            if (playerManager)
-            {
-                animator.SetTrigger("Attack");
+                // 공격 사정거리 안에 플레이어가 있다면
+                if (canAttack)
+                {
+                    animator.SetTrigger("Attack");
+                }
+                else
+                {
+                    animator.SetFloat("MoveSpeed", agent.velocity.magnitude);
+                }
+
+                targetDelay = 0f;
             }
             else
             {
-                animator.SetFloat("MoveSpeed", agent.velocity.magnitude);
+                agent.destination = initialPos;
             }
-
-            targetDelay = 0f;
+        }
+        else
+        {
+            agent.destination = initialPos;
         }
     }
 
@@ -123,9 +137,9 @@ public class Enemy : MonoBehaviour
     public void Attack()
     {
         // 플레이어가 범위 안에 있다면
-        if (playerManager)
+        if (canAttack)
         {
-            playerManager.GetDamaged(30, transform.position);
+            targetPlayerObj.GetComponent<PlayerManager>().GetDamaged(30, transform.position);
         }
     }
 }

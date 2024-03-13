@@ -8,9 +8,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [Header("Enemy")]
-    [SerializeField] GameObject[] spawnPoint;
-
     [Header("BGM")]
     [SerializeField] AudioClip bgmSound;
     AudioSource BGM;
@@ -47,8 +44,6 @@ public class GameManager : MonoBehaviour
         // 게임 시작 시, 컷신을 바로 플레이
         //cut = GetComponent<PlayableDirector>();
         //cut.Play();
-
-        StartCoroutine(EnemySpawn());
     }
 
     public void LoadMainMenuScene()
@@ -73,19 +68,6 @@ public class GameManager : MonoBehaviour
         gameOverUIObj.SetActive(true);
     }
 
-    IEnumerator EnemySpawn()
-    {
-        if (PoolManager.instance != null)
-        {
-            PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
-        }
-
-        yield return new WaitForSeconds(10f);
-
-        // 2초 뒤에 해당 함수를 재귀호출한다.
-        StartCoroutine(EnemySpawn());
-    }
-
     void PlayBGMSound()
     {
         BGM = GetComponent<AudioSource>();
@@ -99,7 +81,7 @@ public class GameManager : MonoBehaviour
     {
         isWatching = false;
         PlayBGMSound();
-        GameObject enemy = PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
+        // GameObject enemy = PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
         // StartCoroutine(EnemySpawn());
     }
 
