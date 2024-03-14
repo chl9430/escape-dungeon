@@ -56,6 +56,7 @@ public class PlayerManager : MonoBehaviour
     StarterAssetsInputs input;
     Animator anim;
     GameObject scanedNPCObj;
+    GameObject scanedToolObj;
 
     void Awake()
     {
@@ -82,6 +83,14 @@ public class PlayerManager : MonoBehaviour
         ShowQuestBox();
 
         AimCheck();
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (scanedToolObj != null)
+            {
+                scanedToolObj.GetComponent<ItemBox>().InteractObject();
+            }
+        }
 
         HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
     }
@@ -281,6 +290,12 @@ public class PlayerManager : MonoBehaviour
             scanedNPCObj = other.gameObject;
         }
 
+        if (other.gameObject.CompareTag("Tool"))
+        {
+            GameManager.instance.ShowGuide("도구와 상호작용 하려면 CTRL버튼을 누르십시오.");
+            scanedToolObj = other.gameObject;
+        }
+
         if (other.gameObject.CompareTag("AttackRange"))
         {
             Enemy enemy = other.GetComponentInParent<Enemy>();
@@ -294,6 +309,11 @@ public class PlayerManager : MonoBehaviour
         {
             GameManager.instance.HideGuide();
             scanedNPCObj = null;
+        }
+
+        if (other.gameObject.CompareTag("Tool"))
+        {
+            GameManager.instance.HideGuide();
         }
 
         if (other.gameObject.CompareTag("AttackRange"))

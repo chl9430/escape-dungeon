@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Guide")]
     [SerializeField] GameObject guideObj;
+
+    [Header("Game Log")]
+    [SerializeField] GameObject gameLogGroupObj;
 
     [Header("Game Over")]
     [SerializeField] GameObject gameOverUIObj;
@@ -44,6 +48,14 @@ public class GameManager : MonoBehaviour
         // 게임 시작 시, 컷신을 바로 플레이
         //cut = GetComponent<PlayableDirector>();
         //cut.Play();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            gameLogGroupObj.GetComponent<GameLogContainer>().AddGameLog("아이템을 획득하였습니다.");
+        }
     }
 
     public void LoadMainMenuScene()
