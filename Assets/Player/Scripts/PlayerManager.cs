@@ -32,6 +32,8 @@ public class PlayerManager : MonoBehaviour
     bool isReloading;
     bool isAiming;
 
+    bool isInteracting;
+
     public GameObject Inventory { get { return inventory; } }
     public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
     public bool IsInventory { get { return isInventory; } }
@@ -40,6 +42,8 @@ public class PlayerManager : MonoBehaviour
     public bool IsReloading { get { return isReloading; } }
     public bool IsInvincible { get { return isInvincible; } }
     public bool IsDamaged { get { return isDamaged; } }
+
+    public bool IsInteracting { get { return isInteracting; } }
     public bool IsAlive
     {
         get
@@ -84,15 +88,34 @@ public class PlayerManager : MonoBehaviour
 
         AimCheck();
 
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            if (scanedToolObj != null)
-            {
-                scanedToolObj.GetComponent<ItemBox>().InteractObject();
-            }
-        }
+        ActivateTool();
+
+        //if (Input.GetKeyDown(KeyCode.LeftControl))
+        //{
+        //    if (scanedToolObj != null)
+        //    {
+        //        scanedToolObj.GetComponent<Tool>().InteractObject();
+        //    }
+        //}
 
         HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
+    }
+
+    void ActivateTool()
+    {
+        // 물체와 상호작용 버튼을 눌렀을 때
+        if (input.interact && !isInventory && !isTalking 
+            && !isDamaged && !isReloading && !isInteracting
+            && !GameManager.instance.IsWatching)
+        {
+            input.interact = false;
+
+            isInteracting = true;
+
+            scanedToolObj.GetComponent<Tool>().InteractObject();
+
+            isInteracting = false;
+        }
     }
 
     // 데미지 애니메이션 마지막에 호출
@@ -116,7 +139,7 @@ public class PlayerManager : MonoBehaviour
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible && !isDead)
+        if (!isInvincible && !isDead && !GameManager.instance.IsWatching)
         {
             // 재장전 상태라면
             if (isReloading)
@@ -218,7 +241,9 @@ public class PlayerManager : MonoBehaviour
         }
 
         // 등록된 aim 버튼을 눌렀을 때
-        if (input.aim && !isInventory && !isTalking && !isReloading && !isInvincible)
+        if (input.aim && !isInventory && !isTalking 
+            && !isDamaged && !isReloading && !isInteracting 
+            && !GameManager.instance.IsWatching)
         {
             // 에임 카메라로 전환
             pistol.SetAim(true);

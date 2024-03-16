@@ -15,16 +15,22 @@ public class GameManager : MonoBehaviour
 
     [Header("Guide")]
     [SerializeField] GameObject guideObj;
+    GameObject currentGuideObj;
 
     [Header("Game Log")]
-    [SerializeField] GameObject gameLogGroupObj;
+    [SerializeField] GameObject gameLogObj;
+    List<GameObject> gameLogObjList;
 
     [Header("Game Over")]
     [SerializeField] GameObject gameOverUIObj;
 
     PlayerManager playerManager;
     PlayableDirector cut;
-    public bool isWatching = false;
+
+    [SerializeField] GameObject gameUIObj;
+    bool isWatching = false;
+
+    public bool IsWatching { set { isWatching = value; } get { return isWatching; } }
 
     void Awake()
     {
@@ -37,6 +43,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        gameLogObjList = new List<GameObject>();
     }
 
     void Start()
@@ -54,7 +62,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.U))
         {
-            gameLogGroupObj.GetComponent<GameLogContainer>().AddGameLog("아이템을 획득하였습니다.");
+            AddGameLog("아이템을 획득하였습니다.");
         }
     }
 
@@ -99,12 +107,41 @@ public class GameManager : MonoBehaviour
 
     public void ShowGuide(string _guideText)
     {
-        guideObj.transform.GetComponentInChildren<Text>().text = _guideText;
-        guideObj.SetActive(true);
+        if (currentGuideObj != null)
+        {
+            Destroy(currentGuideObj);
+        }
+
+        currentGuideObj = Instantiate(guideObj);
+        currentGuideObj.transform.SetParent(gameUIObj.transform, false);
+        currentGuideObj.GetComponentInChildren<Text>().text = _guideText;
     }
 
     public void HideGuide()
     {
-        guideObj.SetActive(false);
+        Destroy(currentGuideObj);
+    }
+
+    public void AddGameLog(string _logContent)
+    {
+        GameObject logObj = Instantiate(gameLogObj);
+        logObj.transform.SetParent(gameUIObj.transform, false);
+        logObj.GetComponent<Text>().text = _logContent;
+
+        for (int i = 0; i < gameLogObjList.Count; i++)
+        {
+            RectTransform logRectTransform = gameLogObjList[i].GetComponent<RectTransform>();
+
+            Vector2 logPos = logRectTransform.anchoredPosition;
+            logPos.y += logRectTransform.sizeDelta.y;
+            logRectTransform.anchoredPosition = logPos;
+        }
+
+        gameLogObjList.Add(logObj);
+    }
+
+    public void RemoveGameLogInTheList(GameObject _logObj)
+    {
+        gameLogObjList.Remove(_logObj);
     }
 }

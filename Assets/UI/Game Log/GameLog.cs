@@ -7,7 +7,7 @@ public class GameLog : MonoBehaviour
     // 로그 애니메이션 마지막에 호출된다.
     public void RemoveGameLog()
     {
-        GetComponentInParent<GameLogContainer>().RemoveGameLogInTheList(gameObject);
+        FindObjectOfType<GameManager>().RemoveGameLogInTheList(gameObject);
         Destroy(gameObject);
     }
 }

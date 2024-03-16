@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemBox : MonoBehaviour
+public class ItemBox : Tool
 {
     [SerializeField] GameObject itemObj;
 
@@ -19,8 +19,7 @@ public class ItemBox : MonoBehaviour
         inventory = FindObjectOfType<Inventory>();
     }
 
-
-    public void InteractObject()
+    public override void InteractObject()
     {
         if (itemObj != null)
         {

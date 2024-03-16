@@ -198,7 +198,7 @@ namespace StarterAssets
         private void CameraRotation()
         {
             // 카메라 회전 제어
-            if (playerManager.IsInventory || playerManager.IsTalking)
+            if (playerManager.IsInventory || playerManager.IsTalking || GameManager.instance.IsWatching)
             {
                 return;
             }
@@ -227,8 +227,9 @@ namespace StarterAssets
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
-            // // 플레이어 이동(달리기) 제어
-            if (playerManager.IsInventory || playerManager.IsTalking || playerManager.IsDamaged)
+            // 플레이어 이동(달리기) 제어
+            if (playerManager.IsInventory || playerManager.IsTalking 
+                || playerManager.IsDamaged || playerManager.IsInteracting || GameManager.instance.IsWatching)
             {
                 targetSpeed = 0f;
             }
@@ -281,7 +282,8 @@ namespace StarterAssets
 
                 // 플레이어 회전 제어
                 if (!playerManager.IsAiming && !playerManager.IsInventory 
-                    && !playerManager.IsTalking && !playerManager.IsDamaged)
+                    && !playerManager.IsTalking && !playerManager.IsDamaged && !playerManager.IsInteracting
+                    && !GameManager.instance.IsWatching)
                 {
                     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 }
@@ -307,7 +309,9 @@ namespace StarterAssets
             // 플레이어 점프 제어
             if (playerManager.IsTalking
                 || playerManager.IsInventory
-                || playerManager.IsDamaged)
+                || playerManager.IsDamaged
+                || playerManager.IsInteracting
+                || GameManager.instance.IsWatching)
             {
                 _input.jump = false;
             }

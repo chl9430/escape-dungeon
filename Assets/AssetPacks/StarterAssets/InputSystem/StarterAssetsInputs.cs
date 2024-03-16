@@ -20,6 +20,7 @@ namespace StarterAssets
 		public bool talk;
 		public bool showInventory;
 		public bool showQuest;
+        public bool interact;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -75,7 +76,9 @@ namespace StarterAssets
         {
             if (!playerManager.IsTalking
                 && !playerManager.IsInventory
-                && !playerManager.IsReloading)
+                && !playerManager.IsReloading
+                && !playerManager.IsInteracting
+                && !GameManager.instance.IsWatching)
             {
                 ReloadInput(value.isPressed);
             }
@@ -83,7 +86,9 @@ namespace StarterAssets
 
         public void OnTalk(InputValue value)
         {
-            if (!playerManager.IsInventory)
+            if (!playerManager.IsInventory
+                && !playerManager.IsInteracting
+                && !GameManager.instance.IsWatching)
             {
                 TalkInput(value.isPressed);
             }
@@ -91,7 +96,7 @@ namespace StarterAssets
 
         public void OnShowInventory(InputValue value)
         {
-            if (!playerManager.IsTalking)
+            if (!playerManager.IsTalking && !GameManager.instance.IsWatching)
             {
                 ShowInventoryInput(value.isPressed);
             }
@@ -99,10 +104,15 @@ namespace StarterAssets
 
         public void OnShowQuest(InputValue value)
         {
-            if (!playerManager.IsTalking)
+            if (!playerManager.IsTalking && !GameManager.instance.IsWatching)
             {
                 ShowQuestInput(value.isPressed);
             }
+        }
+
+        public void OnInteract(InputValue value)
+        {
+            InteractInput(value.isPressed);
         }
 #endif
 
@@ -154,6 +164,11 @@ namespace StarterAssets
         public void ShowQuestInput(bool newShowQuestState)
         {
             showQuest = newShowQuestState;
+        }
+
+        public void InteractInput(bool newInteractState)
+        {
+            interact = newInteractState;
         }
 
         private void OnApplicationFocus(bool hasFocus)
