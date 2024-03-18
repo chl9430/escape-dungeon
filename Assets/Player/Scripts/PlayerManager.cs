@@ -347,4 +347,11 @@ public class PlayerManager : MonoBehaviour
             enemy.CanAttack = false;
         }
     }
+
+    void OnParticleCollision(GameObject other)
+    {
+        // 플레이어가 Beholder의 레이저에 맞았을 때
+        GetDamaged(30f, other.transform.position);
+        other.gameObject.SetActive(false);
+    }
 }
