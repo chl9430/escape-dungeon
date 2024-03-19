@@ -64,6 +64,17 @@ public class GameManager : MonoBehaviour
         {
             AddGameLog("아이템을 획득하였습니다.");
         }
+
+        // 컷신을 재생중인 상태라면
+        if (isWatching)
+        {
+            // 게임 UI를 숨긴다.
+            gameUIObj.SetActive(false);
+        }
+        else
+        {
+            gameUIObj.SetActive(true);
+        }
     }
 
     public void LoadMainMenuScene()

@@ -114,6 +114,8 @@ public class PlayerManager : MonoBehaviour
 
             scanedToolObj.GetComponent<Tool>().InteractObject();
 
+            // Tool마다 상호작용이 끝나는 시간이 다를 수 있기 때문에
+            // 나중에는 Tool쪽에서 isInteracting을 거짓으로 만들어 줄 수도 있다.
             isInteracting = false;
         }
     }
