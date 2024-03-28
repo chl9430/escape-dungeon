@@ -9,6 +9,7 @@ public class TalkManager : MonoBehaviour
 
     [SerializeField] GameObject talkBoxObj;
     [SerializeField] GameObject gameUIObj;
+    [SerializeField] GameObject instUIObj;
 
     int talkIndex;
 
@@ -33,7 +34,6 @@ public class TalkManager : MonoBehaviour
         int questMainKey = npc.ID + (10 * (npc.CurrentQuest + 1));
         int key = npc.ID + (int)npc.NPCQuestState + (10 * (npc.CurrentQuest + 1));
 
-        // 퀘스트 키 하드코딩 부분
         if (npc.InteractiveTalkKey != 0)
         {
             key = npc.InteractiveTalkKey;
@@ -53,6 +53,10 @@ public class TalkManager : MonoBehaviour
         {
             if (talkIndex == npc.TalkData[key].Length) // 대화가 끝났다면
             {
+                // 대화 환경을 구축하는 함수
+                SetTalkingEnvironment(false, playerManager);
+                talkIndex = 0;
+
                 if (npc.NPCQuestState == NPCQuestState.HAVE_QUEST) // 퀘스트를 받았다면
                 {
                     // 퀘스트에 따른 하드코딩 부분
@@ -80,8 +84,6 @@ public class TalkManager : MonoBehaviour
                         else
                         {
                             // 인벤토리가 꽉 찼다면, 대화 완료처리 X
-                            SetTalkingEnvironment(false, playerManager);
-                            talkIndex = 0;
                             return;
                         }
                     }
@@ -196,14 +198,13 @@ public class TalkManager : MonoBehaviour
                         }
                     }
                 }
-
-                // 대화 환경을 구축하는 함수
-                SetTalkingEnvironment(false, playerManager);
-                talkIndex = 0;
             }
             else
             {
-                SetTalkingEnvironment(true, playerManager);
+                if (talkIndex == 0)
+                {
+                    SetTalkingEnvironment(true, playerManager);
+                }
                 talkText.text = GetTalk(npc, key, talkIndex);
                 talkIndex++;
             }
@@ -215,6 +216,12 @@ public class TalkManager : MonoBehaviour
         playerManager.IsTalking = isTalking;
         talkBoxObj.SetActive(isTalking);
         gameUIObj.SetActive(!isTalking);
+
+        if (isTalking)
+        {
+            // 게임 가이드, 게임 로그를 모두 삭제한다.
+            GameManager.instance.ClearGameLogInTheList();
+        }
     }
 
     string GetTalk(NPC npc, int key, int talkIndex)
@@ -235,12 +242,14 @@ public class TalkManager : MonoBehaviour
             for (int i = 0; i < itemCnt; i++)
             {
                 inventory.AddItem(items[i]);
+                GameManager.instance.AddGameLog(items[i].GetComponent<Item>().GetItemName() + "을 획득하였습니다.");
             }
 
             return true;
         }
         else // 인벤토리 남은 공간이 없다면
         {
+            GameManager.instance.AddGameLog("가방의 빈공간을 확보해주세요.");
             return false;
         }
     }

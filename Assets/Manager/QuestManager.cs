@@ -56,7 +56,7 @@ public class QuestManager : MonoBehaviour
     {
         if (playerManager.CurrentQuest == 1010)
         {
-            if (deadMonName == "Level 1" && level1MonDeadCnt1010 != 0)
+            if (deadMonName == "Turtle Shell" && level1MonDeadCnt1010 != 0)
             {
                 level1MonDeadCnt1010--;
             }

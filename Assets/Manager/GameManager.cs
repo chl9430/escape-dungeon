@@ -13,9 +13,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] AudioClip bgmSound;
     AudioSource BGM;
 
+    [SerializeField] GameObject gameUIObj;
+    [SerializeField] GameObject instUIObj;
+
     [Header("Guide")]
-    [SerializeField] GameObject guideObj;
-    GameObject currentGuideObj;
+    [SerializeField] GameObject gameGuideObj;
+    GameObject currentGameGuideObj;
 
     [Header("Game Log")]
     [SerializeField] GameObject gameLogObj;
@@ -27,10 +30,29 @@ public class GameManager : MonoBehaviour
     PlayerManager playerManager;
     PlayableDirector cut;
 
-    [SerializeField] GameObject gameUIObj;
     bool isWatching = false;
 
-    public bool IsWatching { set { isWatching = value; } get { return isWatching; } }
+    public bool IsWatching { 
+        set 
+        { 
+            isWatching = value;
+
+            if (isWatching)
+            {
+                ClearGameLogInTheList();
+
+                gameUIObj.SetActive(false);
+            }
+            else
+            {
+                gameUIObj.SetActive(true);
+            }
+        } 
+        get 
+        { 
+            return isWatching;
+        } 
+    }
 
     void Awake()
     {
@@ -63,17 +85,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U))
         {
             AddGameLog("아이템을 획득하였습니다.");
-        }
-
-        // 컷신을 재생중인 상태라면
-        if (isWatching)
-        {
-            // 게임 UI를 숨긴다.
-            gameUIObj.SetActive(false);
-        }
-        else
-        {
-            gameUIObj.SetActive(true);
         }
     }
 
@@ -118,25 +129,25 @@ public class GameManager : MonoBehaviour
 
     public void ShowGuide(string _guideText)
     {
-        if (currentGuideObj != null)
+        if (currentGameGuideObj != null)
         {
-            Destroy(currentGuideObj);
+            Destroy(currentGameGuideObj);
         }
 
-        currentGuideObj = Instantiate(guideObj);
-        currentGuideObj.transform.SetParent(gameUIObj.transform, false);
-        currentGuideObj.GetComponentInChildren<Text>().text = _guideText;
+        currentGameGuideObj = Instantiate(gameGuideObj);
+        currentGameGuideObj.transform.SetParent(instUIObj.transform, false);
+        currentGameGuideObj.GetComponentInChildren<Text>().text = _guideText;
     }
 
     public void HideGuide()
     {
-        Destroy(currentGuideObj);
+        Destroy(currentGameGuideObj);
     }
 
     public void AddGameLog(string _logContent)
     {
         GameObject logObj = Instantiate(gameLogObj);
-        logObj.transform.SetParent(gameUIObj.transform, false);
+        logObj.transform.SetParent(instUIObj.transform, false);
         logObj.GetComponent<Text>().text = _logContent;
 
         for (int i = 0; i < gameLogObjList.Count; i++)
@@ -154,5 +165,15 @@ public class GameManager : MonoBehaviour
     public void RemoveGameLogInTheList(GameObject _logObj)
     {
         gameLogObjList.Remove(_logObj);
+    }
+
+    public void ClearGameLogInTheList()
+    {
+        // 게임 가이드, 게임 로그를 모두 삭제한다.
+        foreach (Transform ui in instUIObj.transform)
+        {
+            Destroy(ui.gameObject);
+        }
+        gameLogObjList.Clear();
     }
 }

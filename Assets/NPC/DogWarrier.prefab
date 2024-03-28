@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 7740156650076553546}
   - component: {fileID: 8620885325584652753}
   - component: {fileID: 538163129425251254}
+  - component: {fileID: 7922990987349703060}
   m_Layer: 8
   m_Name: DogWarrier
   m_TagString: NPC
@@ -304,10 +305,22 @@ MonoBehaviour:
   requestObjs1020:
   - {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
   interactiveNPCObjs1020:
-  - {fileID: 0}
+  - {fileID: 8237649227786884176, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
   RewardObjs1020:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+--- !u!114 &7922990987349703060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047775588955169762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2305247f711791b41afb81db87950d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1404080020127986164
 GameObject:
   m_ObjectHideFlags: 0
