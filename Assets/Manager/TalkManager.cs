@@ -17,9 +17,21 @@ public class TalkManager : MonoBehaviour
     GameObject inventoryObj;
     QuestManager questManager;
 
+    void Awake()
+    {
+        // 어디서든 접근 가능한 정적 변수
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
-        instance = this;
         playerObj = FindObjectOfType<PlayerManager>().gameObject;
         inventoryObj = FindObjectOfType<Inventory>().gameObject;
         questManager = FindObjectOfType<QuestManager>();

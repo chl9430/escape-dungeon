@@ -10,12 +10,9 @@ public class TurtleShell : Enemy
     GameObject targetPlayerObj;
     NavMeshAgent agent;
     Animator animator;
-    QuestManager questManager;
     CapsuleCollider enemyCollider;
 
     Vector3 initialPos;
-
-    bool isDead = false;
 
     void Awake()
     {
@@ -33,23 +30,12 @@ public class TurtleShell : Enemy
         {
             targetPlayerObj = FindObjectOfType<PlayerManager>().gameObject;
         }
-
-        questManager = FindObjectOfType<QuestManager>();
     }
 
     void Update()
     {
         if (isDead)
         {
-            return;
-        }
-
-        if (enemyCurrentHP <= 0)
-        {
-            isDead = true;
-            questManager.CheckDeadMonName(monName);
-            // 죽는 애니메이션이 끝난 후 적을 삭제하기 위해 코루틴 사용
-            StartCoroutine(EnemyDie());
             return;
         }
 
@@ -90,6 +76,17 @@ public class TurtleShell : Enemy
             {
                 animator.SetBool("isWalking", false);
             }
+        }
+    }
+
+    public override void GetDamaged(int _damage)
+    {
+        base.GetDamaged(_damage);
+
+        if (enemyCurrentHP <= 0)
+        {
+            // 죽는 애니메이션이 끝난 후 적을 삭제하기 위해 코루틴 사용
+            StartCoroutine(EnemyDie());
         }
     }
 

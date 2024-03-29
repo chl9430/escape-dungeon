@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class QuestManager : MonoBehaviour
 {
+    public static QuestManager instance;
+
     [Header("Quest 1010")]
     [SerializeField] int level1MonDeadCnt1010 = 1;
 
@@ -17,6 +19,19 @@ public class QuestManager : MonoBehaviour
     Text currentQuest;
 
     public GameObject QuestNPCObj { set { questNPCObj = value; } }
+
+    void Awake()
+    {
+        // 어디서든 접근 가능한 정적 변수
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {

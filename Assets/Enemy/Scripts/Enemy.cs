@@ -12,9 +12,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] float enemyMaxHP = 5;
     [SerializeField] protected float attackCoolTime = 5f;
 
+    protected bool isDead = false;
     protected float enemyCurrentHP = 0;
     protected float currentAttackCoolTime;
     protected bool canAttack = false;
+
+
     public float EnemyCurrentHP { get { return enemyCurrentHP; } }
     public bool CanAttack { set { canAttack = value; } get { return canAttack; } }
 
@@ -25,11 +28,18 @@ public class Enemy : MonoBehaviour
         RefreshHPBar();
     }
 
-    public void GetDamaged(int damage)
+    public virtual void GetDamaged(int _damage)
     {
-        enemyCurrentHP -= damage;
+        enemyCurrentHP -= _damage;
 
         RefreshHPBar();
+
+        if (enemyCurrentHP <= 0)
+        {
+            isDead = true;
+            QuestManager.instance.CheckDeadMonName(monName);
+            GameManager.instance.AddGameLog(monName + "를(을) 처치하였습니다.");
+        }
     }
 
     public void RefreshHPBar()
