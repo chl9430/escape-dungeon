@@ -42,13 +42,14 @@ public class Inventory : MonoBehaviour
             if (slots[i].Item == null)
             {
                 slots[i].Item = _item;
+                GameManager.instance.AddGameLog(_item.GetComponent<Item>().GetItemName() + "을(를) 획득하였습니다.");
                 slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
                 remainedSlotCnt--;
                 return;
             }
         }
 
-        Debug.Log("Inventory is full!");
+        GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
     }
 
     public void SetSelectedItem(GameObject _itemObj, Slot _selectedSlot)

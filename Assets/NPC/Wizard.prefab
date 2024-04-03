@@ -2404,14 +2404,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a5b6ecdbc26aa9f47b973c7481d1268a, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2494,8 +2494,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8160743142967610894}
   - component: {fileID: 5325719582214614087}
-  - component: {fileID: 4352616245170247414}
   - component: {fileID: 6042685680917158986}
+  - component: {fileID: 4792330641631640508}
+  - component: {fileID: 3426123507756678358}
   m_Layer: 8
   m_Name: Wizard
   m_TagString: NPC
@@ -2511,8 +2512,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8237649227786884176}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: -2, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2520,7 +2521,7 @@ Transform:
   - {fileID: 2035938057388840833}
   - {fileID: 7388535747647679956}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!95 &5325719582214614087
 Animator:
   serializedVersion: 5
@@ -2542,25 +2543,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4352616245170247414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8237649227786884176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b3e432ec493de4daa1174661c78e36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: 0
-  haveQuest: {fileID: 21300000, guid: a5b6ecdbc26aa9f47b973c7481d1268a, type: 3}
-  processQuest: {fileID: 21300000, guid: c8e927090ec80f74599f34a1441516d2, type: 3}
-  successQuest: {fileID: 21300000, guid: 7c164a8ab621d5b4cbfdafbb24034032, type: 3}
-  npcQuestState: 0
-  requestObjs1020:
-  - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
 --- !u!65 &6042685680917158986
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2582,6 +2564,46 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 2, z: 3}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!65 &4792330641631640508
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8237649227786884176}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 2, z: 3}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &3426123507756678358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8237649227786884176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641e1de0fd905394588d6c7aed853676, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  haveQuest: {fileID: 21300000, guid: a5b6ecdbc26aa9f47b973c7481d1268a, type: 3}
+  processQuest: {fileID: 21300000, guid: c8e927090ec80f74599f34a1441516d2, type: 3}
+  successQuest: {fileID: 21300000, guid: 7c164a8ab621d5b4cbfdafbb24034032, type: 3}
+  questNPCName: Wizard
+  quest1RequestItemObjs:
+  - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
+  quest1SuccessQuestNPC: {fileID: 7922990987349703060, guid: 73c7a6d4ddcea3e4ca0272c9e58528cf, type: 3}
 --- !u!1 &8345394268072173926
 GameObject:
   m_ObjectHideFlags: 0

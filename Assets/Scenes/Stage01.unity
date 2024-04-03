@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uBAAC\uC2A4\uD130\uB97C 10\uB9C8\uB9AC \uC7A1\uC73C\uC138\uC694."
+  m_Text: "\uC9C4\uD589 \uC911\uC778 \uD018\uC2A4\uD2B8\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."
 --- !u!222 &28282677
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -456,6 +456,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1194184778}
     - target: {fileID: 8858472543934114984, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
+      propertyPath: inventory
+      value: 
+      objectReference: {fileID: 1662515199}
+    - target: {fileID: 8858472543934114984, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: damagedEffectObj
       value: 
       objectReference: {fileID: 840028629}
@@ -687,11 +691,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 236039163}
   m_CullTransparentMesh: 1
---- !u!1 &244949390 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8237649227786884176, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
-  m_PrefabInstance: {fileID: 6284788343931688984}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &262707968
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -921,6 +920,69 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8156441822235059104, guid: f637f6d78963ebd41a7f56bb011fbec4, type: 3}
   m_PrefabInstance: {fileID: 274752007}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &278976533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 278976534}
+  - component: {fileID: 278976535}
+  m_Layer: 0
+  m_Name: StoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &278976534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278976533}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &278976535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278976533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2011ce97bf705974389d9afb9980bcd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quest0_RewardItemObjs:
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  quest0_QuestNPC: {fileID: 1145136854893624264}
+  quest1_RequestItemObjs:
+  - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
+  quest1_RewardItemObjs: []
+  quest1_SuccessQuestNPC: {fileID: 1145136854893624264}
+  quest1_QuestNPC: {fileID: 4463867004033055}
+  quest2_RequestItemObjs:
+  - {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
+  quest2_RewardItemObjs:
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  quest2_SuccessQuestNPC: {fileID: 4463867004033055}
+  quest2_QuestNPC: {fileID: 1145136854893624264}
+  gameUIObj: {fileID: 520276636}
+  talkBoxObj: {fileID: 2003815166}
 --- !u!1 &306185454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1273,7 +1335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6624692740511763716, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2834,8 +2896,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a28fd457686644a273ef22c8b2b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level1MonDeadCnt1010: 1
-  questTextObj: {fileID: 28282674}
+  currentQuestTitle: {fileID: 28282676}
 --- !u!4 &812238770
 Transform:
   m_ObjectHideFlags: 0
@@ -4192,7 +4253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6624692740511763716, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4872,53 +4933,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8196537224351587572, guid: 59248bce462fff145885b692927915da, type: 3}
   m_PrefabInstance: {fileID: 1319866280}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1364874733
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1364874735}
-  - component: {fileID: 1364874734}
-  m_Layer: 0
-  m_Name: TalkManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1364874734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364874733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4c9928ce75251146a6f2901b40f6bdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  talkBoxObj: {fileID: 2003815166}
-  gameUIObj: {fileID: 520276636}
-  instUIObj: {fileID: 885926759}
---- !u!4 &1364874735
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364874733}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1395212208
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6646,27 +6660,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8160743142967610894, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
   m_PrefabInstance: {fileID: 6284788343931688984}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &4463867004033051
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+--- !u!114 &4463867004033055 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3426123507756678358, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
+  m_PrefabInstance: {fileID: 6284788343931688984}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 244949390}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3, y: 2, z: 3}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641e1de0fd905394588d6c7aed853676, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &901359169263819718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7553,11 +7557,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7922990987349703060, guid: 73c7a6d4ddcea3e4ca0272c9e58528cf, type: 3}
+      propertyPath: quest2SuccessQuestNPC
+      value: 
+      objectReference: {fileID: 4463867004033055}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73c7a6d4ddcea3e4ca0272c9e58528cf, type: 3}
+--- !u!114 &1145136854893624264 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7922990987349703060, guid: 73c7a6d4ddcea3e4ca0272c9e58528cf, type: 3}
+  m_PrefabInstance: {fileID: 1145136854893624263}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2305247f711791b41afb81db87950d9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1361109358450488108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9550,6 +9569,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 73785722}
     m_Modifications:
+    - target: {fileID: 3426123507756678358, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
+      propertyPath: quest1SuccessQuestNPC
+      value: 
+      objectReference: {fileID: 1145136854893624264}
     - target: {fileID: 8160743142967610894, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2
@@ -9594,14 +9617,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wizard
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5209704889630677895, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8237649227786884176, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4463867004033051}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7fe5080fd642d0d49b1d8bda07280e76, type: 3}
 --- !u!224 &7471526338791858496
 RectTransform:
@@ -10548,8 +10567,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 705507995}
   - {fileID: 400446603}
-  - {fileID: 1364874735}
   - {fileID: 812238770}
+  - {fileID: 278976534}
   - {fileID: 673859146}
   - {fileID: 8944336656808392282}
   - {fileID: 1076234814}

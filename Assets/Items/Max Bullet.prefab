@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1493949998356322352}
   - component: {fileID: 7438199012483751499}
   m_Layer: 5
-  m_Name: Bullet
+  m_Name: Max Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

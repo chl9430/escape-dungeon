@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DogWarrier : QuestNPC
+public class Wizard : QuestNPC
 {
     void Awake()
     {

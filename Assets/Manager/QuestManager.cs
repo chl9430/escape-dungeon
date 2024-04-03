@@ -8,17 +8,13 @@ public class QuestManager : MonoBehaviour
 {
     public static QuestManager instance;
 
-    [Header("Quest 1010")]
-    [SerializeField] int level1MonDeadCnt1010 = 1;
+    [SerializeField] Text currentQuestTitle;
 
-    [SerializeField] GameObject questTextObj;
+    QuestNPC currentQuestNPC;
+    QuestDetail? currentQuestDetail = null; // 구조체 타입의 변수를 null로 만들 수 있는 변수로 만든다.
 
-    GameObject player;
-    GameObject questNPCObj;
-    PlayerManager playerManager;
-    Text currentQuest;
-
-    public GameObject QuestNPCObj { set { questNPCObj = value; } }
+    [Header("Quest Number 0")]
+    int turtleshellDeadCnt;
 
     void Awake()
     {
@@ -33,48 +29,39 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    void Start()
+    public void SetCurrentQuestDetail(QuestDetail _questDetail, QuestNPC _questNPC)
     {
-        player = FindObjectOfType<PlayerManager>().gameObject;
-        playerManager = player.GetComponent<PlayerManager>();
+        currentQuestNPC = _questNPC;
+        currentQuestDetail = _questDetail;
 
-        if (questTextObj != null)
+        currentQuestTitle.text = _questDetail.questSum;
+    }
+
+    public void CheckDeadMonName(string _deadMonName)
+    {
+        // 퀘스트에 따른 하드코딩 부분
+        if (currentQuestDetail != null && StoryManager.instance.CurrentQuestNum == 0)
         {
-            currentQuest = questTextObj.GetComponent<Text>();
+            if (_deadMonName == "Turtle Shell")
+            {
+                turtleshellDeadCnt++;
+
+                currentQuestTitle.text += ("(" + (2 - turtleshellDeadCnt) + "마리남음)");
+
+                if (turtleshellDeadCnt == 2)
+                {
+                    currentQuestTitle.text = currentQuestDetail?.questSum + "(성공)";
+                    currentQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
+                }
+            }
         }
     }
 
-    void Update()
+    public void ResetCurrentQuestDetail()
     {
-        if (playerManager.CurrentQuest == 1010)
-        {
-            if (level1MonDeadCnt1010 == 0)
-            {
-                questNPCObj.GetComponent<NPC>().SetSuccessArr();
-                currentQuest.color = Color.green;
-                currentQuest.text = "몬스터를 5마리 처치하세요." + " (완료)";
-            }
-            else
-            {
-                currentQuest.color = Color.white;
-                currentQuest.text = "몬스터를 5마리 처치하세요." + " (" + level1MonDeadCnt1010 + "마리 남음)";
-            }
-        }
-        else
-        {
-            currentQuest.color = Color.white;
-            currentQuest.text = "진행 중인 퀘스트가 없습니다.";
-        }
-    }
+        currentQuestNPC = null;
+        currentQuestDetail = null;
 
-    public void CheckDeadMonName(string deadMonName)
-    {
-        if (playerManager.CurrentQuest == 1010)
-        {
-            if (deadMonName == "Turtle Shell" && level1MonDeadCnt1010 != 0)
-            {
-                level1MonDeadCnt1010--;
-            }
-        }
+        currentQuestTitle.text = "진행 중인 퀘스트가 없습니다.";
     }
 }

@@ -17,12 +17,11 @@ public class PlayerManager : MonoBehaviour
     bool isDead;
 
     [Header("Inventory")]
-    [SerializeField] GameObject inventory;
+    [SerializeField] Inventory inventory;
     bool isInventory;
 
     [Header("Quest")]
     [SerializeField] GameObject questBox;
-    int currentQuest;
     bool isTalking;
     bool isQuestBox;
 
@@ -34,8 +33,7 @@ public class PlayerManager : MonoBehaviour
 
     bool isInteracting;
 
-    public GameObject Inventory { get { return inventory; } }
-    public int CurrentQuest { get { return currentQuest; } set { currentQuest = value; } }
+    public Inventory Inventory { get { return inventory; } }
     public bool IsInventory { get { return isInventory; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
     public bool IsAiming { get { return isAiming; } set { isAiming = value; } }
@@ -59,7 +57,7 @@ public class PlayerManager : MonoBehaviour
 
     StarterAssetsInputs input;
     Animator anim;
-    GameObject scanedNPCObj;
+    QuestNPC scanedQuestNPC;
     GameObject scanedToolObj;
 
     void Awake()
@@ -73,11 +71,6 @@ public class PlayerManager : MonoBehaviour
         maxHP = 100;
     }
 
-    void Start()
-    {
-        inventory = FindObjectOfType<Inventory>().gameObject;
-    }
-
     void Update()
     {
         Talk();
@@ -89,14 +82,6 @@ public class PlayerManager : MonoBehaviour
         AimCheck();
 
         ActivateTool();
-
-        //if (Input.GetKeyDown(KeyCode.LeftControl))
-        //{
-        //    if (scanedToolObj != null)
-        //    {
-        //        scanedToolObj.GetComponent<Tool>().InteractObject();
-        //    }
-        //}
 
         HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
     }
@@ -197,12 +182,12 @@ public class PlayerManager : MonoBehaviour
             if (isInventory == false)
             {
                 isInventory = true;
-                inventory.GetComponent<Inventory>().SetIsShowingInven(true);
+                inventory.SetIsShowingInven(true);
             }
             else
             {
                 isInventory = false;
-                inventory.GetComponent<Inventory>().SetIsShowingInven(false);
+                inventory.SetIsShowingInven(false);
             }
         }
     }
@@ -213,9 +198,13 @@ public class PlayerManager : MonoBehaviour
         {
             input.talk = false;
 
-            if (scanedNPCObj != null)
+            if (scanedQuestNPC != null)
             {
-                TalkManager.instance.Talk(scanedNPCObj);
+                if (scanedQuestNPC.QuestState != QuestState.NONE)
+                {
+                    isTalking = true;
+                    StoryManager.instance.Talk(scanedQuestNPC);
+                }
             }
         }
     }
@@ -314,7 +303,7 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.CompareTag("NPC"))
         {
             GameManager.instance.ShowGuide("NPC와 대화하려면 T버튼을 누르십시오.");
-            scanedNPCObj = other.gameObject;
+            scanedQuestNPC = other.GetComponent<QuestNPC>();
         }
 
         if (other.gameObject.CompareTag("Tool"))
@@ -335,7 +324,7 @@ public class PlayerManager : MonoBehaviour
         if (other.gameObject.CompareTag("NPC"))
         {
             GameManager.instance.HideGuide();
-            scanedNPCObj = null;
+            scanedQuestNPC = null;
         }
 
         if (other.gameObject.CompareTag("Tool"))
