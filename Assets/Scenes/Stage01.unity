@@ -964,6 +964,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2011ce97bf705974389d9afb9980bcd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameUIObj: {fileID: 520276636}
+  talkBoxObj: {fileID: 2003815166}
   quest0_RewardItemObjs:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
@@ -981,8 +983,6 @@ MonoBehaviour:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   quest2_SuccessQuestNPC: {fileID: 4463867004033055}
   quest2_QuestNPC: {fileID: 1145136854893624264}
-  gameUIObj: {fileID: 520276636}
-  talkBoxObj: {fileID: 2003815166}
 --- !u!1 &306185454
 GameObject:
   m_ObjectHideFlags: 0
@@ -5632,8 +5632,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 132180f440bca864dbefeb17d57e7e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  item2: {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
+  item:
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
   slotParent: {fileID: 930820083}
   slots: []
   selectedItemSlot: {fileID: 665384031}

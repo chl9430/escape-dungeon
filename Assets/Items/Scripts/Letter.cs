@@ -6,6 +6,6 @@ public class Letter : Item
 {
     public override void Use(GameObject target)
     {
-        Debug.Log("사용할 수 없는 아이템입니다.");
+        GameManager.instance.AddGameLog("사용할 수 없는 아이템입니다.");
     }
 }

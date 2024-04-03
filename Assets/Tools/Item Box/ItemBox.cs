@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemBox : Tool
 {
-    [SerializeField] GameObject itemObj;
+    [SerializeField] GameObject[] itemObjs;
 
     Animator anim;
     Inventory inventory;
@@ -21,20 +21,28 @@ public class ItemBox : Tool
 
     public override void InteractObject()
     {
-        if (itemObj != null)
+        if (itemObjs != null)
         {
-            anim.SetTrigger("OpenBox");
+            if (inventory.CheckInventorySlots(itemObjs.Length))
+            {
+                anim.SetTrigger("OpenBox");
+            }
+            else
+            {
+                GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
+                return;
+            }
         }
     }
 
     // 상자가 열리는 애니메이션 끝 부분에 호출된다.
     public void GiveItem()
     {
-        if (itemObj != null)
+        if (itemObjs != null)
         {
-            inventory.AddItem(itemObj);
+            inventory.AddItems(itemObjs, itemObjs.Length);
 
-            itemObj = null;
+            itemObjs = null;
         }
     }
 }

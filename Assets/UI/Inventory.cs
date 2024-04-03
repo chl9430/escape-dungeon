@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] GameObject item;
-    [SerializeField] GameObject item2;
+    [SerializeField] GameObject[] item;
 
     [SerializeField] Transform slotParent;
     [SerializeField] Slot[] slots;
@@ -26,30 +26,48 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            AddItem(item);
-        }
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            AddItem(item2);
+            AddItems(item, item.Length);
         }
     }
 
-    public void AddItem(GameObject _item)
+    public bool AddItems(GameObject[] _itemObjs, int _requireSlotCnt)
     {
-        for (int i = 0; i < slots.Length; i++)
+        if (CheckInventorySlots(_requireSlotCnt))
         {
-            if (slots[i].Item == null)
+            for (int i = 0; i < _itemObjs.Length; i++)
             {
-                slots[i].Item = _item;
-                GameManager.instance.AddGameLog(_item.GetComponent<Item>().GetItemName() + "을(를) 획득하였습니다.");
-                slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
-                remainedSlotCnt--;
-                return;
+                for (int j = 0; j < slots.Length; j++)
+                {
+                    if (slots[j].Item == null)
+                    {
+                        slots[j].Item = _itemObjs[i];
+                        GameManager.instance.AddGameLog(_itemObjs[i].GetComponent<Item>().GetItemName() + "을(를) 획득하였습니다.");
+                        slots[j].GetComponent<Button>().onClick.AddListener(slots[j].SelectItem);
+                        remainedSlotCnt--;
+                        break;
+                    }
+                }
             }
-        }
 
-        GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
+            return true;
+        }
+        else
+        {
+            GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
+            return false;
+        }
+    }
+
+    public bool CheckInventorySlots(int _requireSlots)
+    {
+        if (GetRemainedSlots() < _requireSlots)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public void SetSelectedItem(GameObject _itemObj, Slot _selectedSlot)
@@ -91,6 +109,7 @@ public class Inventory : MonoBehaviour
             {
                 slots[i].Item = null;
                 remainedSlotCnt++;
+                return;
             }
         }
     }

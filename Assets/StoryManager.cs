@@ -100,18 +100,11 @@ public class StoryManager : MonoBehaviour
                 // 전해줄 물건이 있다면 전해준다.
                 if (questDetail.requestItemObjs != null)
                 {
-                    // 플레이어의 인벤토리의 빈 칸이 충분하다면
-                    if (CheckRemainedSlots(questDetail.requestItemObjs))
+                    // 플레이어의 인벤토리의 빈 칸이 충분한지 확인
+                    if (!playerManager.Inventory.AddItems(questDetail.requestItemObjs, questDetail.requestItemObjs.Length))
                     {
-                        for (int i = 0; i < questDetail.requestItemObjs.Length; i++)
-                        {
-                            playerManager.Inventory.AddItem(questDetail.requestItemObjs[i]);
-                        }
-                    }
-                    else // 빈칸이 없으면 바로 대화 종료
-                    {
+                        // 충분하지 않으면 바로 대화종료
                         FinishTalk();
-                        GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
                         return;
                     }
                 }
@@ -176,26 +169,15 @@ public class StoryManager : MonoBehaviour
                     {
                         requiredSlotCnt = questDetail.rewardItemObjs.Length - 1;
 
-                        // 플레이어의 인벤토리의 빈 칸이 충분하지 않으면
-                        if (requiredSlotCnt > playerManager.Inventory.GetRemainedSlots())
-                        {
-                            // 바로 대화 종료
-                            FinishTalk();
-                            GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
-                            return;
-                        }
-                        else
+                        // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
+                        if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))
                         {
                             for (int i = 0; i < questDetail.requestItemObjs.Length; i++)
                             {
                                 playerManager.Inventory.PassItemToNPC(questDetail.requestItemObjs[i]);
                             }
                         }
-                    }
-                    else // NPC가 기다리는 물건이 없다면
-                    {
-                        // 플레이어의 인벤토리의 빈 칸이 충분하지 않으면
-                        if (requiredSlotCnt > playerManager.Inventory.GetRemainedSlots())
+                        else
                         {
                             // 바로 대화 종료
                             FinishTalk();
@@ -205,9 +187,11 @@ public class StoryManager : MonoBehaviour
                     }
 
                     // 인벤토리의 빈 칸 체크가 끝났다면 아이템 교환
-                    for (int i = 0; i < questDetail.rewardItemObjs.Length; i++)
+                    if (!playerManager.Inventory.AddItems(questDetail.rewardItemObjs, requiredSlotCnt))
                     {
-                        playerManager.Inventory.AddItem(questDetail.rewardItemObjs[i]);
+                        // 바로 대화 종료
+                        FinishTalk();
+                        return;
                     }
                 }
 
@@ -224,18 +208,6 @@ public class StoryManager : MonoBehaviour
                 currentQuestNum++;
                 FindNextQuestNPC(currentQuestNum);
             }
-        }
-    }
-
-    bool CheckRemainedSlots(GameObject[] rewardItemObjs)
-    {
-        if (rewardItemObjs.Length <= playerManager.Inventory.GetRemainedSlots())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
