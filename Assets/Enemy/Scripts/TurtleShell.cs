@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class TurtleShell : Enemy
 {
     [SerializeField] float recogPlayerRange = 15;
+    [SerializeField] float wanderCoolTime = 5;
 
     GameObject targetPlayerObj;
     NavMeshAgent agent;
@@ -14,12 +15,15 @@ public class TurtleShell : Enemy
 
     Vector3 initialPos;
 
+    public float currentWanderCooltime;
+
     void Awake()
     {
         initialPos = transform.position;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
+        currentWanderCooltime = Random.Range(0f, wanderCoolTime);
 
         InitEnemyHP();
     }
@@ -55,6 +59,7 @@ public class TurtleShell : Enemy
         {
             agent.destination = targetPlayerObj.transform.position;
             transform.LookAt(targetPlayerObj.transform.position);
+
             animator.SetBool("isWalking", true);
 
             // 공격 사정거리 안에 플레이어가 있고, 다음 공격까지 대기시간이 0초 이하라면
@@ -70,13 +75,36 @@ public class TurtleShell : Enemy
         }
         else
         {
-            agent.destination = initialPos;
+            if (currentWanderCooltime != 0f)
+            {
+                currentWanderCooltime -= Time.deltaTime;
+
+                if (currentWanderCooltime <= 0f)
+                {
+                    Vector3 newPos = initialPos;
+
+                    if (Vector3.Distance(transform.position, initialPos) <= 5)
+                    {
+                        newPos = RandomNavSphere(transform.position, 5);
+                    }
+
+                    agent.SetDestination(newPos);
+
+                    currentWanderCooltime = Random.Range(0, wanderCoolTime);
+                }
+            }
 
             if (agent.velocity.magnitude == 0f)
             {
                 animator.SetBool("isWalking", false);
             }
+            else
+            {
+                animator.SetBool("isWalking", true);
+            }
         }
+
+        
     }
 
     public override void GetDamaged(int _damage)
@@ -114,5 +142,17 @@ public class TurtleShell : Enemy
         {
             targetPlayerObj.GetComponent<PlayerManager>().GetDamaged(10, transform.position);
         }
+    }
+
+    public static Vector3 RandomNavSphere(Vector3 origin, float dist)
+    {
+        // 위치 (0, 0, 0)을 기준으로 반지름이 dist인 구 내에 랜덤 위치 생성
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+
+        // 몬스터의 원래 포지션에 생성된 랜덤 좌표를 더한다.
+        randDirection += origin;
+
+        NavMesh.SamplePosition(randDirection, out NavMeshHit navHit, dist, NavMesh.AllAreas);
+        return navHit.position;
     }
 }
