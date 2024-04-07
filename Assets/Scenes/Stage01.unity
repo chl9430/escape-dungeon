@@ -158,7 +158,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 50}
+  m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &28282676
 MonoBehaviour:
@@ -968,7 +968,6 @@ MonoBehaviour:
   talkBoxObj: {fileID: 2003815166}
   quest0_RewardItemObjs:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   quest0_QuestNPC: {fileID: 1145136854893624264}
   quest1_RequestItemObjs:
   - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
@@ -980,9 +979,15 @@ MonoBehaviour:
   quest2_RewardItemObjs:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
   quest2_SuccessQuestNPC: {fileID: 4463867004033055}
   quest2_QuestNPC: {fileID: 1145136854893624264}
+  quest3_RequestItemObjs: []
+  quest3_RewardItemObjs:
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  quest3_SuccessQuestNPC: {fileID: 4463867004033055}
+  quest3_QuestNPC: {fileID: 4463867004033055}
 --- !u!1 &306185454
 GameObject:
   m_ObjectHideFlags: 0

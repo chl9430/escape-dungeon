@@ -42,6 +42,12 @@ public class StoryManager : MonoBehaviour
     [SerializeField] QuestNPC quest2_SuccessQuestNPC;
     [SerializeField] QuestNPC quest2_QuestNPC;
 
+    [Header("Quest 3")]
+    [SerializeField] GameObject[] quest3_RequestItemObjs;
+    [SerializeField] GameObject[] quest3_RewardItemObjs;
+    [SerializeField] QuestNPC quest3_SuccessQuestNPC;
+    [SerializeField] QuestNPC quest3_QuestNPC;
+
     Dictionary<int, QuestDetail> questDic;
     PlayerManager playerManager;
     int currentQuestNum;
@@ -372,5 +378,57 @@ public class StoryManager : MonoBehaviour
         };
 
         questDic.Add(2, mainQuest2);
+
+        // quest 3
+        QuestDetail mainQuest3 = new()
+        {
+            questSum = "Beholder을 3마리 처치하세요.",
+            requestItemObjs = quest3_RequestItemObjs,
+            rewardItemObjs = quest3_RewardItemObjs,
+            talkDic = new Dictionary<int, TalkDetail>(),
+            questNPC = quest3_QuestNPC,
+        };
+
+        // have_quest 대사
+        mainQuest3.talkDic[0] = new TalkDetail()
+        {
+            talkingQuestNPC = quest3_QuestNPC,
+            talks = new string[]
+            {
+                "부탁을 하나 더 들어주세요.",
+                "Beholder라는 몬스터를 3마리 잡아주세요.",
+                "조심하세요. 그들은 원거리 공격을 합니다.",
+            }
+        };
+
+        // process_quest 대사
+        mainQuest3.talkDic[1] = new TalkDetail()
+        {
+            talkingQuestNPC = quest3_QuestNPC,
+            talks = new string[]
+            {
+                "다 잡아오셨나요?",
+                "좀 어려운 부탁이긴 합니다.",
+                "당신의 한계는 여기까지 인가요?"
+            }
+        };
+
+        // success_quest 대사
+        mainQuest3.talkDic[2] = new TalkDetail()
+        {
+            talkingQuestNPC = quest3_SuccessQuestNPC,
+            talks = new string[]
+            {
+                "오! 다 잡아오셨군요.",
+                "감사합니다.",
+                "여기를 나가기 위해서는 게이트를 활성화해야합니다.",
+                "게이트를 활성화하기 위해서는 게이트버튼을 찾아야해요.",
+                "이곳 어딘가에 해골모양의 게이트버튼이 있습니다.",
+                "그 버튼을 누르면 게이트가 활성화 될겁니다.",
+                "행운을 빕니다!"
+            }
+        };
+
+        questDic.Add(3, mainQuest3);
     }
 }
