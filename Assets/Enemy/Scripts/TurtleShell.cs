@@ -15,7 +15,7 @@ public class TurtleShell : Enemy
 
     Vector3 initialPos;
 
-    public float currentWanderCooltime;
+    float currentWanderCooltime;
 
     void Awake()
     {
@@ -60,8 +60,6 @@ public class TurtleShell : Enemy
             agent.destination = targetPlayerObj.transform.position;
             transform.LookAt(targetPlayerObj.transform.position);
 
-            animator.SetBool("isWalking", true);
-
             // 공격 사정거리 안에 플레이어가 있고, 다음 공격까지 대기시간이 0초 이하라면
             if (canAttack && currentAttackCoolTime <= 0f)
             {
@@ -83,8 +81,10 @@ public class TurtleShell : Enemy
                 {
                     Vector3 newPos = initialPos;
 
+                    // 자신의 영역을 벗어나지 않았다면
                     if (Vector3.Distance(transform.position, initialPos) <= 5)
                     {
+                        // 그 영역 내에서 랜덤한 값으로 움직인다.
                         newPos = RandomNavSphere(transform.position, 5);
                     }
 
@@ -93,18 +93,16 @@ public class TurtleShell : Enemy
                     currentWanderCooltime = Random.Range(0, wanderCoolTime);
                 }
             }
-
-            if (agent.velocity.magnitude == 0f)
-            {
-                animator.SetBool("isWalking", false);
-            }
-            else
-            {
-                animator.SetBool("isWalking", true);
-            }
         }
 
-        
+        if (agent.velocity.magnitude == 0f)
+        {
+            animator.SetBool("isWalking", false);
+        }
+        else
+        {
+            animator.SetBool("isWalking", true);
+        }
     }
 
     public override void GetDamaged(int _damage)
