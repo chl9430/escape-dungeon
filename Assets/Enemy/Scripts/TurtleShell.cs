@@ -24,6 +24,7 @@ public class TurtleShell : Enemy
         animator = GetComponent<Animator>();
         enemyCollider = GetComponent<CapsuleCollider>();
         currentWanderCooltime = Random.Range(0f, wanderCoolTime);
+        enemyName.text = monName;
 
         InitEnemyHP();
     }

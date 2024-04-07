@@ -7,7 +7,11 @@ public class Wizard : QuestNPC
 {
     void Awake()
     {
-        questMark = GetComponentInChildren<Image>();
         questState = QuestState.NONE;
+
+        if (npcName != null)
+        {
+            npcName.text = questNPCName;
+        }
     }
 }

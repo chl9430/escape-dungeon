@@ -1,6 +1,7 @@
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.Image;
 
 public class Pistol : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Pistol : MonoBehaviour
     [SerializeField] float aimObjDis = 10f;
     [SerializeField] float maxShootDelay = 1f;
     [SerializeField] int maxShootLimit;
+    [SerializeField] float aimRange;
     [SerializeField] LayerMask targetLayer;
 
     [Header("Weapon Sound Effect")]
@@ -130,8 +132,10 @@ public class Pistol : MonoBehaviour
         Transform camTransform = Camera.main.transform;
         RaycastHit hit;
 
+        Debug.DrawRay(camTransform.position, camTransform.forward * aimRange, Color.red);
+
         // 카메라 전방 방향으로 레이캐스트 발사
-        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity, targetLayer))
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, aimRange, targetLayer))
         {
             targetPosition = hit.point;
             aimObj.transform.position = hit.point;
@@ -143,6 +147,11 @@ public class Pistol : MonoBehaviour
             // 조준 된 게 없을때는 타겟을 항상 카메라 전방으로 설정
             targetPosition = camTransform.position + camTransform.forward * aimObjDis;
             aimObj.transform.position = camTransform.position + camTransform.forward * aimObjDis;
+
+            if (enemy)
+            {
+                enemy = null;
+            }
         }
 
         return targetPosition;

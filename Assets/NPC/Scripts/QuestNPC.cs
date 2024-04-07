@@ -16,12 +16,14 @@ public class QuestNPC : MonoBehaviour
     [SerializeField] Sprite haveQuest;
     [SerializeField] Sprite processQuest;
     [SerializeField] Sprite successQuest;
-    [SerializeField] string questNPCName;
+    [SerializeField] Image questMark;
+    [SerializeField] protected Text npcName;
+    [SerializeField] protected string questNPCName;
 
     public string QuestNPCName {  get { return questNPCName; } }
 
     protected QuestState questState;
-    protected Image questMark;
+
     public QuestState QuestState { get { return questState; } set { questState = value; } }
 
     public void SetQuestState(QuestState _state)

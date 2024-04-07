@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 
@@ -83,7 +84,14 @@ public class Inventory : MonoBehaviour
         // 선택된 아이템을 누르면 호출될 콜백함수
         useBtn.onClick.AddListener(() => {
             UseItem(item, _selectedSlot);
-            useBtn.onClick.RemoveAllListeners();
+
+            if (item.IsUsable())
+            {
+                useBtn.onClick.RemoveAllListeners();
+            }
+
+            // 현재 선택된 객체를 null로 설정하여 포커스 해제
+            EventSystem.current.SetSelectedGameObject(null);
         });
     }
 

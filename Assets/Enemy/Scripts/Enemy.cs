@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] Slider HPBar;
+    [SerializeField] protected Text enemyName;
 
     [SerializeField] protected string monName = "";
     [SerializeField] float enemyMaxHP = 5;
