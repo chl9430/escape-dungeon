@@ -216,7 +216,7 @@ GameObject:
   - component: {fileID: 8620885325584652753}
   - component: {fileID: 7922990987349703060}
   m_Layer: 8
-  m_Name: DogWarrier
+  m_Name: Dog Warrior
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -230,8 +230,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1047775588955169762}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.92387956, z: 0, w: 0.38268343}
-  m_LocalPosition: {x: -2, y: 0, z: 2}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -239,7 +239,7 @@ Transform:
   - {fileID: 8950832717212485304}
   - {fileID: 1417482248305495629}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 135, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &7740156650076553546
 Animator:
   serializedVersion: 5
@@ -299,7 +299,7 @@ MonoBehaviour:
   successQuest: {fileID: 21300000, guid: 7c164a8ab621d5b4cbfdafbb24034032, type: 3}
   questMark: {fileID: 811955757311779001}
   npcName: {fileID: 5939886698664052269}
-  questNPCName: Dog Warrier
+  questNPCName: Dog Warrior
 --- !u!1 &1404080020127986164
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
@@ -27,14 +28,26 @@ public class GameManager : MonoBehaviour
     [Header("Game Over")]
     [SerializeField] GameObject gameOverUIObj;
 
+    [Header("Player Spawn Point")]
+    Transform[] playerSpawnPoints;
+
+    [Header("Monster Spawn Point")]
+    [SerializeField] Transform[] monSpawnPoints;
+    [SerializeField] GameObject[] monObjs;
+
+    [Header("Item Box Spawn Point")]
+    [SerializeField] Transform[] itemBoxSpawnPoints;
+    [SerializeField] GameObject[] itemBoxObjs;
+
     PlayerManager playerManager;
     PlayableDirector cut;
 
     bool isWatching = false;
 
-    public bool IsWatching { 
-        set 
-        { 
+    public bool IsWatching
+    {
+        set
+        {
             isWatching = value;
 
             if (isWatching)
@@ -47,11 +60,11 @@ public class GameManager : MonoBehaviour
             {
                 gameUIObj.SetActive(true);
             }
-        } 
-        get 
-        { 
+        }
+        get
+        {
             return isWatching;
-        } 
+        }
     }
 
     void Awake()
@@ -72,6 +85,48 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         playerManager = FindObjectOfType<PlayerManager>();
+
+        // 플레이어 위치를 찾는다.
+        playerSpawnPoints = FindObjectsOfType<Transform>()
+                                                .Where(obj => obj.name == "Player Spawn Point")
+                                                .ToArray();
+
+        // 찾은 위치 중 랜덤한 위치에 플레이어를 생성한다.
+        // 플레이어의 위치를 기억한다.
+        playerManager.gameObject.transform.position = playerSpawnPoints[Random.Range(0, playerSpawnPoints.Length)].position;
+
+        // 쉬운 모드
+        // 몬스터 스폰(몬스터 5마리)
+        for (int i = 0; i < 5; i++)
+        {
+            int spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
+
+            // 플레이어의 위치가 몬스터 스폰 위치와 너무 가깝다면
+            while (Vector3.Distance(playerManager.transform.position, monSpawnPoints[spawnPointRandNum].position)
+                <= 16)
+            {
+                // 몬스터 스폰 위치를 다시 랜덤으로 찾는다.
+                spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
+            }
+
+            if (i == 0 || i == 1)
+            {
+                Instantiate(monObjs[0],
+                monSpawnPoints[spawnPointRandNum]);
+            }
+            else if (i == 2 || i == 3 || i == 4)
+            {
+                Instantiate(monObjs[1],
+                monSpawnPoints[spawnPointRandNum]);
+            }
+        }
+
+        // 아이템 박스 스폰(아이템 박스 3개)
+        for (int i = 0; i < 3; i++)
+        {
+            Instantiate(itemBoxObjs[Random.Range(0, itemBoxObjs.Length)],
+                itemBoxSpawnPoints[Random.Range(0, itemBoxSpawnPoints.Length)]);
+        }
 
         // currentShootDelay = 0f;
 

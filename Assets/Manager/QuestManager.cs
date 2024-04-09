@@ -55,6 +55,8 @@ public class QuestManager : MonoBehaviour
             {
                 turtleshellDeadCnt--;
 
+                currentQuestTitle.text = currentQuestDetail?.questSum;
+
                 currentQuestTitle.text += ("\n(" + turtleshellDeadCnt + "마리남음)");
 
                 if (turtleshellDeadCnt == 0)
@@ -65,20 +67,22 @@ public class QuestManager : MonoBehaviour
             }
         }
         else if (currentQuestDetail != null && StoryManager.instance.CurrentQuestNum == 3)
+        {
+            if (_deadMonName == "Beholder")
             {
-                if (_deadMonName == "Beholder")
+                beholderDeadCnt--;
+
+                currentQuestTitle.text = currentQuestDetail?.questSum;
+
+                currentQuestTitle.text += ("\n(" + beholderDeadCnt + "마리남음)");
+
+                if (beholderDeadCnt == 0)
                 {
-                    beholderDeadCnt--;
-
-                    currentQuestTitle.text += ("\n(" + beholderDeadCnt + "마리남음)");
-
-                    if (beholderDeadCnt == 0)
-                    {
-                        currentQuestTitle.text = currentQuestDetail?.questSum + "(성공)";
-                        currentQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
-                    }
+                    currentQuestTitle.text = currentQuestDetail?.questSum + "(성공)";
+                    currentQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
                 }
             }
+        }
     }
 
     public void ResetCurrentQuestDetail()

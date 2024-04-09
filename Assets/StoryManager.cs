@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +5,17 @@ using UnityEngine.UI;
 
 public struct TalkDetail
 {
-    public QuestNPC talkingQuestNPC;
+    public string talkingNPCName;
     public string[] talks;
 }
 
 public struct QuestDetail
 {
     public string questSum;
-    public QuestNPC questNPC;
+    public string requestNPCName;
     public GameObject[] requestItemObjs;
-    public Dictionary<int, TalkDetail> talkDic;
     public GameObject[] rewardItemObjs;
+    public Dictionary<int, TalkDetail> talkDic;
 }
 
 public class StoryManager : MonoBehaviour
@@ -27,26 +26,33 @@ public class StoryManager : MonoBehaviour
     [SerializeField] GameObject talkBoxObj;
 
     [Header("Quest 0")]
+    [SerializeField] GameObject[] quest0_RequestItemObjs;
     [SerializeField] GameObject[] quest0_RewardItemObjs;
-    [SerializeField] QuestNPC quest0_QuestNPC;
+    [SerializeField] string quest0_RequestNPCName;
+    [SerializeField] string quest0_SuccessNPCName;
 
     [Header("Quest 1")]
     [SerializeField] GameObject[] quest1_RequestItemObjs;
     [SerializeField] GameObject[] quest1_RewardItemObjs;
-    [SerializeField] QuestNPC quest1_SuccessQuestNPC;
-    [SerializeField] QuestNPC quest1_QuestNPC;
+    [SerializeField] string quest1_RequestNPCName;
+    [SerializeField] string quest1_SuccessNPCName;
 
     [Header("Quest 2")]
     [SerializeField] GameObject[] quest2_RequestItemObjs;
     [SerializeField] GameObject[] quest2_RewardItemObjs;
-    [SerializeField] QuestNPC quest2_SuccessQuestNPC;
-    [SerializeField] QuestNPC quest2_QuestNPC;
+    [SerializeField] string quest2_RequestNPCName;
+    [SerializeField] string quest2_SuccessNPCName;
 
     [Header("Quest 3")]
     [SerializeField] GameObject[] quest3_RequestItemObjs;
     [SerializeField] GameObject[] quest3_RewardItemObjs;
-    [SerializeField] QuestNPC quest3_SuccessQuestNPC;
-    [SerializeField] QuestNPC quest3_QuestNPC;
+    [SerializeField] string quest3_RequestNPCName;
+    [SerializeField] string quest3_SuccessNPCName;
+
+    [Header("NPC Spawn Point")]
+    [SerializeField] Transform[] npcSpawnPoints;
+    [SerializeField] GameObject[] npcObjs;
+    List<QuestNPC> questNPCList;
 
     Dictionary<int, QuestDetail> questDic;
     PlayerManager playerManager;
@@ -69,11 +75,32 @@ public class StoryManager : MonoBehaviour
         }
 
         questDic = new Dictionary<int, QuestDetail>();
+        questNPCList = new List<QuestNPC>();
         currentQuestNum = 0;
     }
 
     void Start()
     {
+        // NPC
+        List<int> randNumList = new List<int>();
+
+        for (int i = 0; i < npcObjs.Length; i++)
+        {
+            int randPosIndex = Random.Range(0, npcSpawnPoints.Length);
+
+            // NPC가 중복된 위치에 생성되지 않게 한다.
+            while (randNumList.Contains(randPosIndex))
+            {
+                randPosIndex = Random.Range(0, npcSpawnPoints.Length);
+            }
+
+            randNumList.Add(randPosIndex);
+
+            // 생성한 NPC를 인스턴스화 한다.
+            questNPCList.Add(Instantiate(npcObjs[i],
+                npcSpawnPoints[randPosIndex]).GetComponent<QuestNPC>());
+        }
+
         GenerateTalkData();
 
         playerManager = FindObjectOfType<PlayerManager>();
@@ -104,7 +131,7 @@ public class StoryManager : MonoBehaviour
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
                 // 전해줄 물건이 있다면 전해준다.
-                if (questDetail.requestItemObjs != null)
+                if (questDetail.requestItemObjs.Length != 0)
                 {
                     // 플레이어의 인벤토리의 빈 칸이 충분한지 확인
                     if (!playerManager.Inventory.AddItems(questDetail.requestItemObjs, questDetail.requestItemObjs.Length))
@@ -126,13 +153,11 @@ public class StoryManager : MonoBehaviour
                 // 제3자 NPC라면, 제3자 NPC를 퀘스트 완료 상태로 변경
                 if (currentQuestNum == 1)
                 {
-                    QuestNPC successQuestNPC = questDetail.talkDic[2].talkingQuestNPC;
-                    successQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
+                    FindNPCByName(questDetail.talkDic[2].talkingNPCName).SetQuestState(QuestState.SUCCESS_QUEST);
                 }
                 else if (currentQuestNum == 2)
                 {
-                    QuestNPC successQuestNPC = questDetail.talkDic[2].talkingQuestNPC;
-                    successQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
+                    FindNPCByName(questDetail.talkDic[2].talkingNPCName).SetQuestState(QuestState.SUCCESS_QUEST);
                 }
             }
         }
@@ -165,47 +190,43 @@ public class StoryManager : MonoBehaviour
             }
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
-                // 플레이어에게 줄 보상이 있다면 인벤토리 빈 칸 체크
-                if (questDetail.rewardItemObjs != null)
+                int requiredSlotCnt = questDetail.rewardItemObjs.Length;
+
+                // NPC가 기다리는 물건이 있다면
+                if (questDetail.requestItemObjs.Length != 0)
                 {
-                    int requiredSlotCnt = questDetail.rewardItemObjs.Length;
+                    requiredSlotCnt = questDetail.rewardItemObjs.Length - questDetail.requestItemObjs.Length;
 
-                    // NPC가 기다리는 물건이 있다면
-                    if (questDetail.requestItemObjs != null)
+                    // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
+                    if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))
                     {
-                        requiredSlotCnt = questDetail.rewardItemObjs.Length - 1;
-
-                        // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
-                        if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))
+                        for (int i = 0; i < questDetail.requestItemObjs.Length; i++)
                         {
-                            for (int i = 0; i < questDetail.requestItemObjs.Length; i++)
-                            {
-                                playerManager.Inventory.PassItemToNPC(questDetail.requestItemObjs[i]);
-                            }
-                        }
-                        else
-                        {
-                            // 바로 대화 종료
-                            FinishTalk();
-                            GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
-                            return;
+                            playerManager.Inventory.PassItemToNPC(questDetail.requestItemObjs[i]);
                         }
                     }
-
-                    // 인벤토리의 빈 칸 체크가 끝났다면 아이템 교환
-                    if (!playerManager.Inventory.AddItems(questDetail.rewardItemObjs, requiredSlotCnt))
+                    else
                     {
                         // 바로 대화 종료
                         FinishTalk();
+                        GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
                         return;
                     }
+                }
+
+                // 인벤토리의 빈 칸 체크가 끝났다면 아이템 교환
+                if (!playerManager.Inventory.AddItems(questDetail.rewardItemObjs, requiredSlotCnt))
+                {
+                    // 바로 대화 종료
+                    FinishTalk();
+                    return;
                 }
 
                 FinishTalk();
 
                 // 제3자 NPC와 퀘스트를 준 NPC를 모두 퀘스트 없음 상태로 만든다.
                 _questNPC.SetQuestState(QuestState.NONE);
-                questDetail.questNPC.SetQuestState(QuestState.NONE);
+                FindNPCByName(questDetail.requestNPCName).SetQuestState(QuestState.NONE);
 
                 // 할당 된 퀘스트를 모두 초기화한다.
                 QuestManager.instance.ResetCurrentQuestDetail();
@@ -213,8 +234,23 @@ public class StoryManager : MonoBehaviour
                 // 다음 퀘스트를 찾는다.
                 currentQuestNum++;
                 FindNextQuestNPC(currentQuestNum);
+
+                // 퀘스트가 끝나면 별도로 할 액션 추가하기
             }
         }
+    }
+
+    QuestNPC FindNPCByName(string _name)
+    {
+        foreach (QuestNPC questNPC in questNPCList)
+        {
+            if (questNPC.QuestNPCName == _name)
+            {
+                return questNPC;
+            }
+        }
+
+        return null;
     }
 
     void FinishTalk()
@@ -231,7 +267,7 @@ public class StoryManager : MonoBehaviour
     {
         if (questDic.ContainsKey(_questNum))
         {
-            questDic[_questNum].questNPC.SetQuestState(QuestState.HAVE_QUEST);
+            FindNPCByName(questDic[_questNum].requestNPCName).SetQuestState(QuestState.HAVE_QUEST);
         }
     }
 
@@ -241,15 +277,16 @@ public class StoryManager : MonoBehaviour
         QuestDetail mainQuest0 = new QuestDetail
         {
             questSum = "TurtleShell을 2마리 처치하세요.",
+            requestNPCName = quest0_RequestNPCName,
+            requestItemObjs = quest0_RequestItemObjs,
             rewardItemObjs = quest0_RewardItemObjs,
             talkDic = new Dictionary<int, TalkDetail>(),
-            questNPC = quest0_QuestNPC,
         };
 
         // have_quest 대사
         mainQuest0.talkDic[0] = new TalkDetail()
         {
-            talkingQuestNPC = quest0_QuestNPC,
+            talkingNPCName = quest0_RequestNPCName,
             talks = new string[]
             {
                 "안녕하세요",
@@ -261,7 +298,7 @@ public class StoryManager : MonoBehaviour
         // process_quest 대사
         mainQuest0.talkDic[1] = new TalkDetail()
         {
-            talkingQuestNPC = quest0_QuestNPC,
+            talkingNPCName = quest0_RequestNPCName,
             talks = new string[]
             {
                 "다 잡아오셨나요?",
@@ -272,7 +309,7 @@ public class StoryManager : MonoBehaviour
         // success_quest 대사
         mainQuest0.talkDic[2] = new TalkDetail()
         {
-            talkingQuestNPC = quest0_QuestNPC,
+            talkingNPCName = quest0_SuccessNPCName,
             talks = new string[]
             {
                 "고생하셨습니다.",
@@ -288,16 +325,16 @@ public class StoryManager : MonoBehaviour
         QuestDetail mainQuest1 = new()
         {
             questSum = "Dog Warrier에게 편지를 전달하세요.",
+            requestNPCName = quest1_RequestNPCName,
             requestItemObjs = quest1_RequestItemObjs,
             rewardItemObjs = quest1_RewardItemObjs,
             talkDic = new Dictionary<int, TalkDetail>(),
-            questNPC = quest1_QuestNPC,
         };
 
         // have_quest 대사
         mainQuest1.talkDic[0] = new TalkDetail()
         {
-            talkingQuestNPC = quest1_QuestNPC,
+            talkingNPCName = quest1_RequestNPCName,
             talks = new string[]
             {
                 "안녕하세요",
@@ -310,7 +347,7 @@ public class StoryManager : MonoBehaviour
         // process_quest 대사
         mainQuest1.talkDic[1] = new TalkDetail()
         {
-            talkingQuestNPC = quest1_QuestNPC,
+            talkingNPCName = quest1_RequestNPCName,
             talks = new string[]
             {
                 "답장을 받아오셨나요?",
@@ -321,7 +358,7 @@ public class StoryManager : MonoBehaviour
         // success_quest 대사
         mainQuest1.talkDic[2] = new TalkDetail()
         {
-            talkingQuestNPC = quest1_SuccessQuestNPC,
+            talkingNPCName = quest1_SuccessNPCName,
             talks = new string[]
             {
                 "무슨일인가요?",
@@ -336,16 +373,16 @@ public class StoryManager : MonoBehaviour
         QuestDetail mainQuest2 = new QuestDetail
         {
             questSum = "Wizard에게 답장을 전달하세요.",
+            requestNPCName = quest2_RequestNPCName,
             requestItemObjs = quest2_RequestItemObjs,
             rewardItemObjs = quest2_RewardItemObjs,
             talkDic = new Dictionary<int, TalkDetail>(),
-            questNPC = quest2_QuestNPC,
         };
 
         // have_quest 대사
         mainQuest2.talkDic[0] = new TalkDetail()
         {
-            talkingQuestNPC = quest2_QuestNPC,
+            talkingNPCName = quest2_RequestNPCName,
             talks = new string[]
             {
                 "여기 답장을 Wizard에게 전달해주세요.",
@@ -356,7 +393,7 @@ public class StoryManager : MonoBehaviour
         // process_quest 대사
         mainQuest2.talkDic[1] = new TalkDetail()
         {
-            talkingQuestNPC = quest2_QuestNPC,
+            talkingNPCName = quest2_RequestNPCName,
             talks = new string[]
             {
                 "Wizard에게 답장을 전달해주세요.",
@@ -367,7 +404,7 @@ public class StoryManager : MonoBehaviour
         // success_quest 대사
         mainQuest2.talkDic[2] = new TalkDetail()
         {
-            talkingQuestNPC = quest2_SuccessQuestNPC,
+            talkingNPCName = quest2_SuccessNPCName,
             talks = new string[]
             {
                 "오! 답장을 받아오셨군요.",
@@ -383,16 +420,16 @@ public class StoryManager : MonoBehaviour
         QuestDetail mainQuest3 = new()
         {
             questSum = "Beholder을 3마리 처치하세요.",
+            requestNPCName = quest3_RequestNPCName,
             requestItemObjs = quest3_RequestItemObjs,
             rewardItemObjs = quest3_RewardItemObjs,
             talkDic = new Dictionary<int, TalkDetail>(),
-            questNPC = quest3_QuestNPC,
         };
 
         // have_quest 대사
         mainQuest3.talkDic[0] = new TalkDetail()
         {
-            talkingQuestNPC = quest3_QuestNPC,
+            talkingNPCName = quest3_RequestNPCName,
             talks = new string[]
             {
                 "부탁을 하나 더 들어주세요.",
@@ -404,7 +441,7 @@ public class StoryManager : MonoBehaviour
         // process_quest 대사
         mainQuest3.talkDic[1] = new TalkDetail()
         {
-            talkingQuestNPC = quest3_QuestNPC,
+            talkingNPCName = quest3_RequestNPCName,
             talks = new string[]
             {
                 "다 잡아오셨나요?",
@@ -416,7 +453,7 @@ public class StoryManager : MonoBehaviour
         // success_quest 대사
         mainQuest3.talkDic[2] = new TalkDetail()
         {
-            talkingQuestNPC = quest3_SuccessQuestNPC,
+            talkingNPCName = quest3_SuccessNPCName,
             talks = new string[]
             {
                 "오! 다 잡아오셨군요.",
