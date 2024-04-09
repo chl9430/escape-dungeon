@@ -31,6 +31,21 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void AddItem(GameObject _itemObj)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].Item == null)
+            {
+                slots[i].Item = _itemObj;
+                GameManager.instance.AddGameLog(_itemObj.GetComponent<Item>().GetItemName() + "À»(¸¦) È¹µæÇÏ¿´½À´Ï´Ù.");
+                slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
+                remainedSlotCnt--;
+                break;
+            }
+        }
+    }
+
     public bool AddItems(GameObject[] _itemObjs, int _requireSlotCnt)
     {
         if (CheckInventorySlots(_requireSlotCnt))

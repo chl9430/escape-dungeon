@@ -7,8 +7,11 @@ public class GateButton : Tool
 {
     [SerializeField] GameObject virtualCamObj;
     [SerializeField] Material activatedMat;
-    [SerializeField] GameObject portalObj;
-    [SerializeField] GameObject portalPointObj;
+
+    void Start()
+    {
+        StartCoroutine(ActivateGateBtnVirtualCam());
+    }
 
     override public void InteractObject()
     {
@@ -19,25 +22,18 @@ public class GateButton : Tool
 
             // 버튼이 눌렸다면, 색상을 변경한다.
             transform.GetComponentInChildren<MeshRenderer>().material = activatedMat;
-            StartCoroutine(ActiveGate());
+            GameManager.instance.ActivatePortal();
         }
     }
 
-    IEnumerator ActiveGate()
+    // 일정시간 뒤에 게이트버튼의 컷신을 종료한다(시네머신 카메라를 비활성화 한다).
+    IEnumerator ActivateGateBtnVirtualCam()
     {
-        yield return new WaitForSeconds(2f);
-
-        // 포탈 프리팹을 인스턴스화 한다.
-        GameObject portalInstObj = Instantiate(portalObj, portalPointObj.transform);
-        virtualCamObj.SetActive(true);
-
-        // 시네머신 카메라가 포탈을 바라보게 한다.
-        virtualCamObj.GetComponent<CinemachineVirtualCamera>().Follow = portalInstObj.transform.GetChild(1);
         GameManager.instance.IsWatching = true;
 
         yield return new WaitForSeconds(2f);
 
-        virtualCamObj.SetActive(false);
+        GetComponentInChildren<CinemachineVirtualCamera>().gameObject.SetActive(false);
         GameManager.instance.IsWatching = false;
     }
 }

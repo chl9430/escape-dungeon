@@ -39,6 +39,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform[] itemBoxSpawnPoints;
     [SerializeField] GameObject[] itemBoxObjs;
 
+    [Header("Gate Btn Spawn Point")]
+    [SerializeField] Transform[] gateBtnSpawnPoints;
+    [SerializeField] GameObject[] gateBtnObjs;
+
+    [Header("Portal Spawn Point")]
+    [SerializeField] Transform[] portalSpawnPoints;
+    [SerializeField] GameObject[] portalObjs;
+
     PlayerManager playerManager;
     PlayableDirector cut;
 
@@ -180,6 +188,28 @@ public class GameManager : MonoBehaviour
         PlayBGMSound();
         // GameObject enemy = PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
         // StartCoroutine(EnemySpawn());
+    }
+
+    public void ActivatePortal()
+    {
+        for (int i = 0; i < portalObjs.Length; i++)
+        {
+            Instantiate(portalObjs[i], 
+                portalSpawnPoints[Random.Range(0, portalSpawnPoints.Length)]);
+        }
+    }
+
+    public void ActivateGateBtn()
+    {
+        for (int i = 0; i < gateBtnObjs.Length; i++)
+        {
+            int gateGroupRanNum = Random.Range(0, gateBtnSpawnPoints.Length);
+
+            int gatePosRanNum = Random.Range(0, gateBtnSpawnPoints[gateGroupRanNum].childCount);
+
+            Instantiate(gateBtnObjs[i],
+                gateBtnSpawnPoints[gateGroupRanNum].GetChild(gatePosRanNum));
+        }
     }
 
     public void ShowGuide(string _guideText)

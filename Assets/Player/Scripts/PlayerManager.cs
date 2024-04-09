@@ -203,6 +203,7 @@ public class PlayerManager : MonoBehaviour
                 if (scanedQuestNPC.QuestState != QuestState.NONE)
                 {
                     isTalking = true;
+                    GameManager.instance.ClearGameLogInTheList();
                     StoryManager.instance.Talk(scanedQuestNPC);
                 }
             }
@@ -343,6 +344,5 @@ public class PlayerManager : MonoBehaviour
     {
         // 플레이어가 Beholder의 레이저에 맞았을 때
         GetDamaged(30f, other.transform.position);
-        other.gameObject.SetActive(false);
     }
 }
