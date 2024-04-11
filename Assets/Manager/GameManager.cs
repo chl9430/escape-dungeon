@@ -47,6 +47,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform[] portalSpawnPoints;
     [SerializeField] GameObject[] portalObjs;
 
+    [Header("Score Time")]
+    public float scoreTime;
+    public Text scoreText;
+
     PlayerManager playerManager;
     PlayableDirector cut;
 
@@ -88,6 +92,8 @@ public class GameManager : MonoBehaviour
         }
 
         gameLogObjList = new List<GameObject>();
+        scoreTime = 0f;
+        IsWatching = true;
     }
 
     void Start()
@@ -145,6 +151,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        scoreTime += Time.deltaTime;
+
+        scoreText.text = scoreTime.ToString("F2");
+
         if (Input.GetKeyDown(KeyCode.U))
         {
             AddGameLog("아이템을 획득하였습니다.");
@@ -166,6 +176,19 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneIndex);
     }
 
+    public void CalculateScore()
+    {
+        int totalScore = 600 - (int)scoreTime;
+
+        if (totalScore < 0)
+        {
+            totalScore = 0;
+        }
+
+        // 쉬운모드는 600초(10분)
+        Debug.Log(totalScore);
+    }
+
     public void SetGameOverUI()
     {
         Cursor.visible = true;
@@ -181,13 +204,10 @@ public class GameManager : MonoBehaviour
         BGM.Play();
     }
 
-    // 컷신이 끝나고 호출 될 함수. 게임 매니저의 타임라인 끝부분에 리시버를 통해 호출된다.
+    // 컷신이 끝나고 호출 될 함수. 게임 스타트 타임라인 끝부분에 리시버를 통해 호출된다.
     public void StartGame()
     {
-        isWatching = false;
-        PlayBGMSound();
-        // GameObject enemy = PoolManager.instance.ActiveObj(3, spawnPoint[Random.Range(0, spawnPoint.Length)].transform.position);
-        // StartCoroutine(EnemySpawn());
+        IsWatching = false;
     }
 
     public void ActivatePortal()
