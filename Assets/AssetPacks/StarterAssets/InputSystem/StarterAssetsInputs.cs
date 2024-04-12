@@ -78,6 +78,7 @@ namespace StarterAssets
                 && !playerManager.IsInventory
                 && !playerManager.IsReloading
                 && !playerManager.IsInteracting
+                && !playerManager.IsDamaged
                 && !GameManager.instance.IsWatching)
             {
                 ReloadInput(value.isPressed);

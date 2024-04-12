@@ -12,7 +12,7 @@ public class Portal : Tool
 
     override public void InteractObject()
     {
-        Debug.Log("Game Clear");
+        GameManager.instance.SetGameClearUI();
     }
 
     // 일정시간 뒤에 포탈의 컷신을 종료한다(시네머신 카메라를 비활성화 한다).

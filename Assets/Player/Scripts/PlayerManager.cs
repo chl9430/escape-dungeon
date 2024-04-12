@@ -126,7 +126,8 @@ public class PlayerManager : MonoBehaviour
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible && !isDead && !GameManager.instance.IsWatching)
+        if (!isInvincible && !isDead && !isTalking && 
+            !GameManager.instance.IsWatching && !GameManager.instance.IsClear)
         {
             // 재장전 상태라면
             if (isReloading)
@@ -343,6 +344,6 @@ public class PlayerManager : MonoBehaviour
     void OnParticleCollision(GameObject other)
     {
         // 플레이어가 Beholder의 레이저에 맞았을 때
-        GetDamaged(30f, other.transform.position);
+        GetDamaged(20f, other.transform.position);
     }
 }

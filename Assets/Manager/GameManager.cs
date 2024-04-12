@@ -48,13 +48,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject[] portalObjs;
 
     [Header("Score Time")]
-    public float scoreTime;
-    public Text scoreText;
+    [SerializeField] GameObject gameClearUIObj;
+    [SerializeField] Text scoreText;
+    [SerializeField] Text finalScoreText;
+
+    float scoreTime;
 
     PlayerManager playerManager;
     PlayableDirector cut;
 
     bool isWatching = false;
+    bool isClear = false;
 
     public bool IsWatching
     {
@@ -76,6 +80,29 @@ public class GameManager : MonoBehaviour
         get
         {
             return isWatching;
+        }
+    }
+
+    public bool IsClear
+    {
+        set
+        {
+            isClear = value;
+
+            if (isClear)
+            {
+                ClearGameLogInTheList();
+
+                gameUIObj.SetActive(false);
+            }
+            else
+            {
+                gameUIObj.SetActive(true);
+            }
+        }
+        get
+        {
+            return isClear;
         }
     }
 
@@ -109,6 +136,76 @@ public class GameManager : MonoBehaviour
         // 플레이어의 위치를 기억한다.
         playerManager.gameObject.transform.position = playerSpawnPoints[Random.Range(0, playerSpawnPoints.Length)].position;
 
+        // currentShootDelay = 0f;
+
+        // 게임 시작 시, 컷신을 바로 플레이
+        //cut = GetComponent<PlayableDirector>();
+        //cut.Play();
+    }
+
+    void Update()
+    {
+        if (!isClear)
+        {
+            scoreTime += Time.deltaTime;
+
+            scoreText.text = scoreTime.ToString("F2");
+        }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            AddGameLog("아이템을 획득하였습니다.");
+        }
+    }
+
+    public void LoadMainMenuScene()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void RestartGame()
+    {
+        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    public void SetGameClearUI()
+    {
+        IsClear = true;
+
+        // 마우스를 표시한다.
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        gameClearUIObj.SetActive(true);
+
+        finalScoreText.text = "걸린시간 : " + ((int)scoreTime).ToString() + "초";
+    }
+
+    public void SetGameOverUI()
+    {
+        // 마우스를 표시한다.
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        gameOverUIObj.SetActive(true);
+    }
+
+    void PlayBGMSound()
+    {
+        BGM = GetComponent<AudioSource>();
+        BGM.clip = bgmSound;
+        BGM.loop = true;
+        BGM.Play();
+    }
+
+    // 컷신이 끝나고 호출 될 함수. 게임 스타트 타임라인 끝부분에 리시버를 통해 호출된다.
+    public void StartGame()
+    {
+        IsWatching = false;
+
         // 쉬운 모드
         // 몬스터 스폰(몬스터 5마리)
         for (int i = 0; i < 5; i++)
@@ -141,73 +238,6 @@ public class GameManager : MonoBehaviour
             Instantiate(itemBoxObjs[Random.Range(0, itemBoxObjs.Length)],
                 itemBoxSpawnPoints[Random.Range(0, itemBoxSpawnPoints.Length)]);
         }
-
-        // currentShootDelay = 0f;
-
-        // 게임 시작 시, 컷신을 바로 플레이
-        //cut = GetComponent<PlayableDirector>();
-        //cut.Play();
-    }
-
-    void Update()
-    {
-        scoreTime += Time.deltaTime;
-
-        scoreText.text = scoreTime.ToString("F2");
-
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            AddGameLog("아이템을 획득하였습니다.");
-        }
-    }
-
-    public void LoadMainMenuScene()
-    {
-        SceneManager.LoadScene(0);
-    }
-
-    public void RestartGame()
-    {
-        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        SceneManager.LoadScene(sceneIndex);
-    }
-
-    public void CalculateScore()
-    {
-        int totalScore = 600 - (int)scoreTime;
-
-        if (totalScore < 0)
-        {
-            totalScore = 0;
-        }
-
-        // 쉬운모드는 600초(10분)
-        Debug.Log(totalScore);
-    }
-
-    public void SetGameOverUI()
-    {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-        gameOverUIObj.SetActive(true);
-    }
-
-    void PlayBGMSound()
-    {
-        BGM = GetComponent<AudioSource>();
-        BGM.clip = bgmSound;
-        BGM.loop = true;
-        BGM.Play();
-    }
-
-    // 컷신이 끝나고 호출 될 함수. 게임 스타트 타임라인 끝부분에 리시버를 통해 호출된다.
-    public void StartGame()
-    {
-        IsWatching = false;
     }
 
     public void ActivatePortal()
