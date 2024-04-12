@@ -124,6 +124,16 @@ public class PlayerManager : MonoBehaviour
         isInvincible = false;
     }
 
+    public void RestoreHP(int _value)
+    {
+        currentHP += _value;
+
+        if (currentHP > maxHP)
+        {
+            currentHP = maxHP;
+        }
+    }
+
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
         if (!isInvincible && !isDead && !isTalking && 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Item : MonoBehaviour, IItem
 {
-    [SerializeField] string itemName;
-    [SerializeField] string itemDescription;
-    [SerializeField] bool isUsable;
+    [SerializeField] protected string itemName;
+    [SerializeField] protected string itemDescription;
+    [SerializeField] protected bool isUsable;
 
     public virtual void Use(GameObject target)
     {

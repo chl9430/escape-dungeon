@@ -56,7 +56,7 @@ public class Inventory : MonoBehaviour
                 {
                     if (slots[j].Item == null)
                     {
-                        slots[j].Item = _itemObjs[i];
+                        slots[j].Item = Instantiate(_itemObjs[i]);
                         GameManager.instance.AddGameLog(_itemObjs[i].GetComponent<Item>().GetItemName() + "À»(¸¦) È¹µæÇÏ¿´½À´Ï´Ù.");
                         slots[j].GetComponent<Button>().onClick.AddListener(slots[j].SelectItem);
                         remainedSlotCnt--;
