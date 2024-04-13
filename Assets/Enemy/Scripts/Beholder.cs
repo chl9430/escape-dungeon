@@ -62,16 +62,6 @@ public class Beholder : Enemy
             agent.destination = targetPlayerObj.transform.position;
             transform.LookAt(targetPlayerObj.transform.position);
 
-            //// 걷는 속도에 따라 애니메이션을 세팅한다.
-            //if (agent.velocity.magnitude != 0f)
-            //{
-            //    animator.SetBool("isWalking", true);
-            //}
-            //else
-            //{
-            //    animator.SetBool("isWalking", false);
-            //}
-
             // 공격 사정거리 안에 플레이어가 있고, 다음 공격까지 대기시간이 0초 이하라면
             if (canAttack && currentAttackCoolTime <= 0f)
             {
@@ -147,7 +137,7 @@ public class Beholder : Enemy
     // 몬스터의 공격 애니메이션 이벤트에서 호출된다.
     public void Attack()
     {
-        GameObject razorFXObj = PoolManager.instance.ActiveObj(4, attackPoint.position);
+        GameObject razorFXObj = PoolManager.instance.ActiveObj(3, attackPoint.position);
         razorFXObj.transform.rotation = Quaternion.LookRotation(transform.forward);
     }
 

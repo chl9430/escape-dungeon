@@ -7,9 +7,11 @@ public class PoolManager : MonoBehaviour
     public static PoolManager instance;
 
     [SerializeField] GameObject[] prefabs;
+    [SerializeField] GameObject[] monObjs;
 
     List<GameObject>[] objPools;
-    
+    List<GameObject>[] monObjList;
+
     int poolSize = 1;
 
     void Awake()
@@ -17,6 +19,7 @@ public class PoolManager : MonoBehaviour
         instance = this;
 
         InitObjPool();
+        InitMonObjPool();
     }
 
     void InitObjPool()
@@ -33,6 +36,20 @@ public class PoolManager : MonoBehaviour
                 obj.SetActive(false);
                 objPools[i].Add(obj);
             }
+        }
+    }
+
+    void InitMonObjPool()
+    {
+        monObjList = new List<GameObject>[monObjs.Length];
+
+        for (int i = 0; i < monObjs.Length; i++)
+        {
+            monObjList[i] = new List<GameObject>();
+
+            GameObject monObj = Instantiate(monObjs[i]);
+            monObj.SetActive(false);
+            monObjList[i].Add(monObj);
         }
     }
 
@@ -59,5 +76,30 @@ public class PoolManager : MonoBehaviour
         obj.SetActive(true);
 
         return obj;
+    }
+
+    public void SetMonActive(Transform _transform)
+    {
+        int selectedMonIdx = Random.Range(0, monObjList.Length);
+
+        List<GameObject> selectedMonList = monObjList[selectedMonIdx];
+
+        for (int i = 0; i < selectedMonList.Count; i++)
+        {
+            // 씬에 비활성화 되어있는게 있다면
+            if (!selectedMonList[i].activeInHierarchy)
+            {
+                selectedMonList[i].transform.parent = _transform;
+                selectedMonList[i].transform.position = _transform.position;
+
+                selectedMonList[i].SetActive(true);
+
+                return;
+            }
+        }
+
+        // 비활성화 되어있는게 없다면
+        GameObject monObj = Instantiate(monObjs[selectedMonIdx], _transform);
+        monObjList[selectedMonIdx].Add(monObj);
     }
 }

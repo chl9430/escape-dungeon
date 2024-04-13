@@ -627,7 +627,7 @@ MonoBehaviour:
   monName: Turtle Shell
   enemyMaxHP: 5
   attackCoolTime: 5
-  recogPlayerRange: 10
+  recogPlayerRange: 5
   wanderCoolTime: 5
 --- !u!1 &1532652994627396
 GameObject:

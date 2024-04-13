@@ -3699,7 +3699,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 197091617815438258, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5169520935146171328, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: m_Name
@@ -3747,15 +3747,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6853955134919229072, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8454806112162759830, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9136403961253984444, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9179034574316528238, guid: e412dd8134f8b5e4abf84dde2a6b7356, type: 3}
       propertyPath: aimRange

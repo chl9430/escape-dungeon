@@ -521,10 +521,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2844138209791571894, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5020810793632654712, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -565,10 +561,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5805663524158312594, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6531950340996019818, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: aimCam
       value: 
@@ -585,17 +577,9 @@ PrefabInstance:
       propertyPath: bulletText
       value: 
       objectReference: {fileID: 1273917329}
-    - target: {fileID: 6561563876564315320, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8356104788382652267, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: m_Name
       value: The Adventurer Blake
-      objectReference: {fileID: 0}
-    - target: {fileID: 8852527155598748308, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8858472543934114984, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: HPBarObj
@@ -1154,7 +1138,7 @@ MonoBehaviour:
   talkBoxObj: {fileID: 2122964117}
   quest0_RequestItemObjs: []
   quest0_RewardItemObjs:
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
   quest0_RequestNPCName: Dog Warrior
   quest0_SuccessNPCName: Dog Warrior
   quest1_RequestItemObjs:
@@ -1166,14 +1150,14 @@ MonoBehaviour:
   - {fileID: 5483095858081367866, guid: e37ce03f8a79a2846a54d1bf6227691a, type: 3}
   quest2_RewardItemObjs:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
   quest2_RequestNPCName: Dog Warrior
   quest2_SuccessNPCName: Wizard
   quest3_RequestItemObjs: []
   quest3_RewardItemObjs:
   - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
   quest3_RequestNPCName: Wizard
   quest3_SuccessNPCName: Wizard
   npcSpawnPoints:
@@ -1610,9 +1594,6 @@ MonoBehaviour:
   - {fileID: 992238479}
   - {fileID: 406245055}
   - {fileID: 497373700}
-  monObjs:
-  - {fileID: 1524411113276028, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
-  - {fileID: 5232223633673167035, guid: 881f00c1c6ecf4f4facbcfd3353f6ea7, type: 3}
   itemBoxSpawnPoints:
   - {fileID: 1084188541}
   - {fileID: 1636267427}
@@ -2970,8 +2951,10 @@ MonoBehaviour:
   - {fileID: 1831507348914483102, guid: 026da99ace8def64190b058ac6a3d7dc, type: 3}
   - {fileID: 6069542809412549790, guid: ef737617630285f46b5ce57e1902a05e, type: 3}
   - {fileID: 6069542809412549790, guid: 88163bb23d5a8aa43b9ab1456ee1eed7, type: 3}
-  - {fileID: 1524411113276028, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
   - {fileID: 1378392670261442350, guid: cde8d4d43136b84469dbf82b19e9a55d, type: 3}
+  monObjs:
+  - {fileID: 1524411113276028, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
+  - {fileID: 5232223633673167035, guid: 881f00c1c6ecf4f4facbcfd3353f6ea7, type: 3}
 --- !u!1 &679492962
 GameObject:
   m_ObjectHideFlags: 0
@@ -6054,65 +6037,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1808726750
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1808726752}
-  - component: {fileID: 1808726751}
-  m_Layer: 0
-  m_Name: Dolly Track
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1808726751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1808726750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Resolution: 20
-  m_Appearance:
-    pathColor: {r: 0, g: 1, b: 0, a: 1}
-    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    width: 0.2
-  m_Looped: 0
-  m_Waypoints:
-  - position: {x: -4.1617184, y: 11.00173, z: 5.025029}
-    roll: 0
-  - position: {x: 0.08774468, y: 3.503561, z: 0.87759984}
-    roll: 0
-  - position: {x: 8.419506, y: 1.6972003, z: -2.3068373}
-    roll: 0
-  - position: {x: 6.455429, y: 1.7784309, z: -6.194217}
-    roll: 0
---- !u!4 &1808726752
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1808726750}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1817273150
 GameObject:
   m_ObjectHideFlags: 0
@@ -11134,7 +11058,6 @@ SceneRoots:
   - {fileID: 8944336656808392282}
   - {fileID: 1076234814}
   - {fileID: 2070925442378097256}
-  - {fileID: 1808726752}
   - {fileID: 51678438}
   - {fileID: 306185455}
   - {fileID: 183370008}

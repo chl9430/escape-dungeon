@@ -40,6 +40,8 @@ public class Enemy : MonoBehaviour
             isDead = true;
             QuestManager.instance.CheckDeadMonName(monName);
             GameManager.instance.AddGameLog(monName + "를(을) 처치하였습니다.");
+
+            GameManager.instance.MonSpawnInRandomPos();
         }
     }
 

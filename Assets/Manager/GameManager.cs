@@ -33,7 +33,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Monster Spawn Point")]
     [SerializeField] Transform[] monSpawnPoints;
-    [SerializeField] GameObject[] monObjs;
 
     [Header("Item Box Spawn Point")]
     [SerializeField] Transform[] itemBoxSpawnPoints;
@@ -210,26 +209,7 @@ public class GameManager : MonoBehaviour
         // 몬스터 스폰(몬스터 5마리)
         for (int i = 0; i < 5; i++)
         {
-            int spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
-
-            // 플레이어의 위치가 몬스터 스폰 위치와 너무 가깝다면
-            while (Vector3.Distance(playerManager.transform.position, monSpawnPoints[spawnPointRandNum].position)
-                <= 16)
-            {
-                // 몬스터 스폰 위치를 다시 랜덤으로 찾는다.
-                spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
-            }
-
-            if (i == 0 || i == 1)
-            {
-                Instantiate(monObjs[0],
-                monSpawnPoints[spawnPointRandNum]);
-            }
-            else if (i == 2 || i == 3 || i == 4)
-            {
-                Instantiate(monObjs[1],
-                monSpawnPoints[spawnPointRandNum]);
-            }
+            MonSpawnInRandomPos();
         }
 
         // 아이템 박스 스폰(아이템 박스 3개)
@@ -238,6 +218,21 @@ public class GameManager : MonoBehaviour
             Instantiate(itemBoxObjs[Random.Range(0, itemBoxObjs.Length)],
                 itemBoxSpawnPoints[Random.Range(0, itemBoxSpawnPoints.Length)]);
         }
+    }
+
+    public void MonSpawnInRandomPos()
+    {
+        int spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
+
+        // 플레이어의 위치가 몬스터 스폰 위치와 너무 가깝다면
+        while (Vector3.Distance(playerManager.transform.position, monSpawnPoints[spawnPointRandNum].position)
+            <= 16)
+        {
+            // 몬스터 스폰 위치를 다시 랜덤으로 찾는다.
+            spawnPointRandNum = Random.Range(0, monSpawnPoints.Length);
+        }
+
+        PoolManager.instance.SetMonActive(monSpawnPoints[spawnPointRandNum]);
     }
 
     public void ActivatePortal()

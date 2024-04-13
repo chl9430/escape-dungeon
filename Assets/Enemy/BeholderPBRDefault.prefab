@@ -1111,7 +1111,7 @@ MonoBehaviour:
   enemyMaxHP: 10
   attackCoolTime: 3
   attackPoint: {fileID: 7613851660547998808}
-  recogPlayerRange: 15
+  recogPlayerRange: 10
   wanderCoolTime: 5
 --- !u!136 &766134016134639885
 CapsuleCollider:
