@@ -59,8 +59,9 @@ public class QuestManager : MonoBehaviour
 
                 currentQuestTitle.text += ("\n(" + turtleshellDeadCnt + "마리남음)");
 
-                if (turtleshellDeadCnt == 0)
+                if (turtleshellDeadCnt <= 0)
                 {
+                    turtleshellDeadCnt = 0;
                     currentQuestTitle.text = currentQuestDetail?.questSum + "(성공)";
                     currentQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
                 }
@@ -76,8 +77,9 @@ public class QuestManager : MonoBehaviour
 
                 currentQuestTitle.text += ("\n(" + beholderDeadCnt + "마리남음)");
 
-                if (beholderDeadCnt == 0)
+                if (beholderDeadCnt <= 0)
                 {
+                    beholderDeadCnt = 0;
                     currentQuestTitle.text = currentQuestDetail?.questSum + "(성공)";
                     currentQuestNPC.SetQuestState(QuestState.SUCCESS_QUEST);
                 }

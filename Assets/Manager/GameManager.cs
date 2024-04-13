@@ -10,10 +10,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [Header("BGM")]
-    [SerializeField] AudioClip bgmSound;
-    AudioSource BGM;
-
     [SerializeField] GameObject gameUIObj;
     [SerializeField] GameObject instUIObj;
 
@@ -54,10 +50,10 @@ public class GameManager : MonoBehaviour
     float scoreTime;
 
     PlayerManager playerManager;
-    PlayableDirector cut;
 
     bool isWatching = false;
     bool isClear = false;
+    bool isDead = false;
 
     public bool IsWatching
     {
@@ -105,6 +101,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool IsDead
+    {
+        set
+        {
+            isDead = value;
+
+            if (isDead)
+            {
+                ClearGameLogInTheList();
+
+                gameUIObj.SetActive(false);
+            }
+            else
+            {
+                gameUIObj.SetActive(true);
+            }
+        }
+        get
+        {
+            return isDead;
+        }
+    }
+
     void Awake()
     {
         // 어디서든 접근 가능한 정적 변수
@@ -134,17 +153,11 @@ public class GameManager : MonoBehaviour
         // 찾은 위치 중 랜덤한 위치에 플레이어를 생성한다.
         // 플레이어의 위치를 기억한다.
         playerManager.gameObject.transform.position = playerSpawnPoints[Random.Range(0, playerSpawnPoints.Length)].position;
-
-        // currentShootDelay = 0f;
-
-        // 게임 시작 시, 컷신을 바로 플레이
-        //cut = GetComponent<PlayableDirector>();
-        //cut.Play();
     }
 
     void Update()
     {
-        if (!isClear)
+        if (!isClear && !isDead)
         {
             scoreTime += Time.deltaTime;
 
@@ -154,6 +167,19 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U))
         {
             AddGameLog("아이템을 획득하였습니다.");
+        }
+    }
+
+    public bool IsInputLock()
+    {
+        if (playerManager.IsTalking || playerManager.IsInventory ||
+            isWatching || isDead || isClear)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -186,18 +212,12 @@ public class GameManager : MonoBehaviour
 
     public void SetGameOverUI()
     {
+        IsDead = true;
+
         // 마우스를 표시한다.
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         gameOverUIObj.SetActive(true);
-    }
-
-    void PlayBGMSound()
-    {
-        BGM = GetComponent<AudioSource>();
-        BGM.clip = bgmSound;
-        BGM.loop = true;
-        BGM.Play();
     }
 
     // 컷신이 끝나고 호출 될 함수. 게임 스타트 타임라인 끝부분에 리시버를 통해 호출된다.

@@ -1660,11 +1660,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
+  m_audioClip: {fileID: 8300000, guid: 10546d9649879d14e8277d84c34d122e, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.3
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -6572,6 +6572,12 @@ PlayableDirector:
     value: {fileID: 779950572}
   - key: {fileID: 4300504478067894996, guid: 68cdafe5e8a9b0b4f8af49127e3b62c4, type: 2}
     value: {fileID: 2115335675}
+  - key: {fileID: 8747194313426821920, guid: 68cdafe5e8a9b0b4f8af49127e3b62c4, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 3385334114852582816, guid: 2727fd70734eb8b43a3669b7b68a0cbb, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!95 &1928442607

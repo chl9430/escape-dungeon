@@ -31,6 +31,7 @@ public class Slot : MonoBehaviour
             else
             {
                 image.sprite = emptyImgSprite;
+                Destroy(item);
             }
         }
     }

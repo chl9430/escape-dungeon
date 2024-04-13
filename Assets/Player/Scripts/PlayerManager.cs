@@ -14,7 +14,6 @@ public class PlayerManager : MonoBehaviour
     float maxHP;
     bool isDamaged;
     bool isInvincible;
-    bool isDead;
 
     [Header("Inventory")]
     [SerializeField] Inventory inventory;
@@ -42,16 +41,6 @@ public class PlayerManager : MonoBehaviour
     public bool IsDamaged { get { return isDamaged; } }
 
     public bool IsInteracting { get { return isInteracting; } }
-    public bool IsAlive
-    {
-        get
-        {
-            if (isDead)
-                return false;
-            else
-                return true;
-        }
-    }
 
     public Pistol Pistol { get {  return pistol; } }
 
@@ -139,8 +128,8 @@ public class PlayerManager : MonoBehaviour
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible && !isDead && !isTalking && 
-            !GameManager.instance.IsWatching && !GameManager.instance.IsClear)
+        if (!isInvincible && !isTalking && 
+            !GameManager.instance.IsWatching && !GameManager.instance.IsClear && !GameManager.instance.IsDead)
         {
             // 재장전 상태라면
             if (isReloading)
@@ -159,7 +148,6 @@ public class PlayerManager : MonoBehaviour
             }
             else // 남은 체력이 충분하지 않다면
             {
-                isDead = true;
                 anim.SetTrigger("Dead");
                 currentHP -= _damage;
                 GetComponent<PlayerInput>().enabled = false;
@@ -170,7 +158,7 @@ public class PlayerManager : MonoBehaviour
 
     void ShowQuestBox()
     {
-        if (input.showQuest)
+        if (!GameManager.instance.IsInputLock() && input.showQuest)
         {
             input.showQuest = false;
 
@@ -195,8 +183,11 @@ public class PlayerManager : MonoBehaviour
 
             if (isInventory == false)
             {
-                isInventory = true;
-                inventory.SetIsShowingInven(true);
+                if (!GameManager.instance.IsInputLock())
+                {
+                    isInventory = true;
+                    inventory.SetIsShowingInven(true);
+                }
             }
             else
             {
@@ -212,13 +203,31 @@ public class PlayerManager : MonoBehaviour
         {
             input.talk = false;
 
-            if (scanedQuestNPC != null)
+            if (!isTalking)
             {
-                if (scanedQuestNPC.QuestState != QuestState.NONE)
+                if (!isInteracting && !GameManager.instance.IsInputLock())
                 {
-                    isTalking = true;
-                    GameManager.instance.ClearGameLogInTheList();
-                    StoryManager.instance.Talk(scanedQuestNPC);
+                    if (scanedQuestNPC != null)
+                    {
+                        if (scanedQuestNPC.QuestState != QuestState.NONE)
+                        {
+                            isTalking = true;
+                            GameManager.instance.ClearGameLogInTheList();
+                            StoryManager.instance.Talk(scanedQuestNPC);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (scanedQuestNPC != null)
+                {
+                    if (scanedQuestNPC.QuestState != QuestState.NONE)
+                    {
+                        isTalking = true;
+                        GameManager.instance.ClearGameLogInTheList();
+                        StoryManager.instance.Talk(scanedQuestNPC);
+                    }
                 }
             }
         }
@@ -231,13 +240,17 @@ public class PlayerManager : MonoBehaviour
         {
             input.reload = false;
 
-            pistol.SetAim(false);
+            if (!isReloading && !isInteracting && !isDamaged
+            && !GameManager.instance.IsInputLock())
+            {
+                pistol.SetAim(false);
 
-            isAiming = false;
-            anim.SetLayerWeight(1, 1);
-            anim.SetTrigger("Reload");
-            isReloading = true;
-            return;
+                isAiming = false;
+                anim.SetLayerWeight(1, 1);
+                anim.SetTrigger("Reload");
+                isReloading = true;
+                return;
+            }
         }
 
         // 재장전 상태라면 조준을 할 수 없게 한다.

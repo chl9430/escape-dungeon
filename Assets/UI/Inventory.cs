@@ -37,7 +37,7 @@ public class Inventory : MonoBehaviour
         {
             if (slots[i].Item == null)
             {
-                slots[i].Item = _itemObj;
+                slots[i].Item = Instantiate(_itemObj);
                 GameManager.instance.AddGameLog(_itemObj.GetComponent<Item>().GetItemName() + "À»(¸¦) È¹µæÇÏ¿´½À´Ï´Ù.");
                 slots[i].GetComponent<Button>().onClick.AddListener(slots[i].SelectItem);
                 remainedSlotCnt--;
@@ -128,7 +128,8 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < slots.Length; i++)
         {
-            if (slots[i].Item == _requestItemObj)
+            string itemName = slots[i].Item.GetComponent<Item>().GetItemName();
+            if (itemName == _requestItemObj.GetComponent<Item>().GetItemName())
             {
                 slots[i].Item = null;
                 remainedSlotCnt++;

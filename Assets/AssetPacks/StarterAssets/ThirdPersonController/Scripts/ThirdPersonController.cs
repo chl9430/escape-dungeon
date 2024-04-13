@@ -198,7 +198,7 @@ namespace StarterAssets
         private void CameraRotation()
         {
             // 카메라 회전 제어
-            if (playerManager.IsInventory || playerManager.IsTalking || GameManager.instance.IsWatching)
+            if (GameManager.instance.IsInputLock())
             {
                 return;
             }
@@ -228,8 +228,7 @@ namespace StarterAssets
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
             // 플레이어 이동(달리기) 제어
-            if (playerManager.IsInventory || playerManager.IsTalking 
-                || playerManager.IsDamaged || playerManager.IsInteracting || GameManager.instance.IsWatching)
+            if (playerManager.IsDamaged || playerManager.IsInteracting || GameManager.instance.IsInputLock())
             {
                 targetSpeed = 0f;
             }
@@ -281,9 +280,8 @@ namespace StarterAssets
                 // rotate to face input direction relative to camera position
 
                 // 플레이어 회전 제어
-                if (!playerManager.IsAiming && !playerManager.IsInventory 
-                    && !playerManager.IsTalking && !playerManager.IsDamaged && !playerManager.IsInteracting
-                    && !GameManager.instance.IsWatching)
+                if (!playerManager.IsAiming && !playerManager.IsDamaged && !playerManager.IsInteracting
+                    && !GameManager.instance.IsInputLock())
                 {
                     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 }
@@ -307,11 +305,8 @@ namespace StarterAssets
         private void JumpAndGravity()
         {
             // 플레이어 점프 제어
-            if (playerManager.IsTalking
-                || playerManager.IsInventory
-                || playerManager.IsDamaged
-                || playerManager.IsInteracting
-                || GameManager.instance.IsWatching)
+            if (playerManager.IsDamaged || playerManager.IsInteracting
+                || GameManager.instance.IsInputLock())
             {
                 _input.jump = false;
             }

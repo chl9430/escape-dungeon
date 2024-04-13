@@ -74,41 +74,22 @@ namespace StarterAssets
 
         public void OnReload(InputValue value)
         {
-            if (!playerManager.IsTalking
-                && !playerManager.IsInventory
-                && !playerManager.IsReloading
-                && !playerManager.IsInteracting
-                && !playerManager.IsDamaged
-                && !GameManager.instance.IsWatching)
-            {
-                ReloadInput(value.isPressed);
-            }
+            ReloadInput(value.isPressed);
         }
 
         public void OnTalk(InputValue value)
         {
-            if (!playerManager.IsInventory
-                && !playerManager.IsInteracting
-                && !GameManager.instance.IsWatching)
-            {
-                TalkInput(value.isPressed);
-            }
+            TalkInput(value.isPressed);
         }
 
         public void OnShowInventory(InputValue value)
         {
-            if (!playerManager.IsTalking && !GameManager.instance.IsWatching)
-            {
-                ShowInventoryInput(value.isPressed);
-            }
+            ShowInventoryInput(value.isPressed);
         }
 
         public void OnShowQuest(InputValue value)
         {
-            if (!playerManager.IsTalking && !GameManager.instance.IsWatching)
-            {
-                ShowQuestInput(value.isPressed);
-            }
+            ShowQuestInput(value.isPressed);
         }
 
         public void OnInteract(InputValue value)

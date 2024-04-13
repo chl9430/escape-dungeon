@@ -197,7 +197,7 @@ public class StoryManager : MonoBehaviour
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
                 // 필요한 인벤토리 수 계산
-                int requiredSlotCnt = questDetail.rewardItemObjs.Length - questDetail.requestItemObjs.Length;
+                int requiredSlotCnt = Mathf.Abs(questDetail.rewardItemObjs.Length - questDetail.requestItemObjs.Length);
 
                 // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
                 if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))

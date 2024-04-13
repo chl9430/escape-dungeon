@@ -32,7 +32,7 @@ public class Beholder : Enemy
 
     void Start()
     {
-        if (FindObjectOfType<PlayerManager>().IsAlive)
+        if (!GameManager.instance.IsDead)
         {
             targetPlayerObj = FindObjectOfType<PlayerManager>().gameObject;
         }
