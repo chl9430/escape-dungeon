@@ -91,4 +91,5 @@ MonoBehaviour:
   itemName: HP Potion
   itemDescription: 
   isUsable: 1
+  count: 0
   restoreHPValue: 20

@@ -5171,8 +5171,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149c23de16c38ac4d9f837df5fd1d64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemObjs:
-  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  items:
+  - {fileID: -3419225064576493262, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
+  - {fileID: 7438199012483751499, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 7438199012483751499, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
 --- !u!95 &378809495601525806
 Animator:
   serializedVersion: 5

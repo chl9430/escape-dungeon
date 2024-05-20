@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class ItemBox : Tool
 {
-    [SerializeField] GameObject[] itemObjs;
+    [SerializeField] GameObject[] items;
 
     Animator anim;
     Inventory inventory;
 
+    List<ItemCountInfo> compressedItemList;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
+        compressedItemList = new List<ItemCountInfo>();
     }
 
     void Start()
@@ -21,9 +24,11 @@ public class ItemBox : Tool
 
     public override void InteractObject()
     {
-        if (itemObjs != null)
+        if (items != null)
         {
-            if (inventory.CheckInventorySlots(itemObjs.Length))
+            compressedItemList = inventory.MakeCompressedItemCntList(items);
+
+            if (inventory.CheckInventorySlots(compressedItemList.Count))
             {
                 anim.SetTrigger("OpenBox");
             }
@@ -38,11 +43,11 @@ public class ItemBox : Tool
     // 상자가 열리는 애니메이션 끝 부분에 호출된다.
     public void GiveItem()
     {
-        if (itemObjs != null)
+        if (items != null)
         {
-            inventory.AddItems(itemObjs, itemObjs.Length);
+            inventory.AddItems(compressedItemList);
 
-            itemObjs = null;
+            items = null;
         }
     }
 }

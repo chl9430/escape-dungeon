@@ -42,7 +42,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool IsInteracting { get { return isInteracting; } }
 
-    public Pistol Pistol { get {  return pistol; } }
+    public Pistol Pistol { get { return pistol; } }
 
     StarterAssetsInputs input;
     Animator anim;
@@ -78,7 +78,7 @@ public class PlayerManager : MonoBehaviour
     void ActivateTool()
     {
         // 물체와 상호작용 버튼을 눌렀을 때
-        if (input.interact && !isInventory && !isTalking 
+        if (input.interact && !isInventory && !isTalking
             && !isDamaged && !isReloading && !isInteracting
             && !GameManager.instance.IsWatching)
         {
@@ -128,7 +128,7 @@ public class PlayerManager : MonoBehaviour
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible && !isTalking && 
+        if (!isInvincible && !isTalking &&
             !GameManager.instance.IsWatching && !GameManager.instance.IsClear && !GameManager.instance.IsDead)
         {
             // 재장전 상태라면
@@ -144,7 +144,7 @@ public class PlayerManager : MonoBehaviour
             {
                 StartCoroutine(SetInvincibleState());
                 transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
-                currentHP -= _damage;
+                // currentHP -= _damage;
             }
             else // 남은 체력이 충분하지 않다면
             {
@@ -240,9 +240,14 @@ public class PlayerManager : MonoBehaviour
         {
             input.reload = false;
 
-            if (!isReloading && !isInteracting && !isDamaged
-            && !GameManager.instance.IsInputLock())
+            if (!GameManager.instance.IsInputLock())
             {
+                // 재장전 상태라면 조준을 할 수 없게 한다.
+                if (isReloading)
+                {
+                    return;
+                }
+
                 pistol.SetAim(false);
 
                 isAiming = false;
@@ -253,47 +258,45 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        // 재장전 상태라면 조준을 할 수 없게 한다.
-        if (isReloading)
-        {
-            return;
-        }
-
         // 등록된 aim 버튼을 눌렀을 때
-        if (input.aim && !isInventory && !isTalking 
-            && !isDamaged && !isReloading && !isInteracting 
-            && !GameManager.instance.IsWatching)
+        if (input.aim)
         {
-            // 에임 카메라로 전환
-            pistol.SetAim(true);
             isAiming = true;
 
-            anim.SetLayerWeight(1, 1);
-
-            Vector3 targetAim = pistol.GetTargetPos();
-            targetAim.y = transform.position.y;
-            Vector3 aimDir = (targetAim - transform.position).normalized;
-
-            // 플레이어의 전방을 항상 타겟으로 고정시킨다.
-            transform.forward = Vector3.Lerp(transform.forward, aimDir, Time.deltaTime * 50f);
-
-            // 등록된 shoot 버튼을 눌렀을 때
-            if (input.shoot)
+            if (!GameManager.instance.IsInputLock())
             {
-                if (pistol.Shoot(targetAim))
+                // 에임 카메라로 전환
+                pistol.SetAim(true);
+
+                anim.SetLayerWeight(1, 1);
+
+                Vector3 targetAim = pistol.GetTargetPos();
+                targetAim.y = transform.position.y;
+                Vector3 aimDir = (targetAim - transform.position).normalized;
+
+                // 플레이어의 전방을 항상 타겟으로 고정시킨다.
+                transform.forward = Vector3.Lerp(
+                    transform.forward, aimDir, Time.deltaTime * 50f
+                );
+
+                // 등록된 shoot 버튼을 눌렀을 때
+                if (input.shoot)
                 {
-                    anim.SetBool("Shoot", true);
+                    if (pistol.Shoot(targetAim))
+                    {
+                        anim.SetBool("Shoot", true);
+                    }
+                    else
+                    {
+                        anim.SetBool("Shoot", false);
+                    }
                 }
                 else
                 {
                     anim.SetBool("Shoot", false);
-                }
-            }
-            else
-            {
-                anim.SetBool("Shoot", false);
 
-                pistol.ResetShootDelay();
+                    pistol.ResetShootDelay();
+                }
             }
         }
         else

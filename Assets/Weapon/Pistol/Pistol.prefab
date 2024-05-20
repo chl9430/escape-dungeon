@@ -257,6 +257,7 @@ MonoBehaviour:
   aimObjDis: 20
   maxShootDelay: 0.5
   maxShootLimit: 0
+  aimRange: 20
   targetLayer:
     serializedVersion: 2
     m_Bits: 72

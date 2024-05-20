@@ -8,6 +8,7 @@ public class HPPotion : Item
 
     void Awake()
     {
+        itemName = "HP Potion";
         itemDescription = "플레이어의 HP를 " + restoreHPValue + "만큼 회복시킵니다.";
     }
 

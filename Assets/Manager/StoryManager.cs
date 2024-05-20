@@ -130,32 +130,24 @@ public class StoryManager : MonoBehaviour
             }
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
-                // 필요한 인벤토리 수 계산
-                int requiredSlotCnt = questDetail.requestItemObjs.Length;
+                List<ItemCountInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.requestItemObjs);
 
-                // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
-                if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))
+                // 인벤토리에 여유가 있으면
+                if (playerManager.Inventory.CheckInventorySlots(compressedItemList.Count))
                 {
-                    // 인벤토리에 여유가 있으면
+                    playerManager.Inventory.AddItems(compressedItemList);
+
                     // 퀘스트에 따른 하드코딩
                     // 제3자 NPC를 퀘스트 완료 상태로 변경
                     if (currentQuestNum == 1 || currentQuestNum == 2)
                     {
                         FindNPCByName(questDetail.talkDic[2].talkingNPCName).SetQuestState(QuestState.SUCCESS_QUEST);
                     }
-
-                    // 플레이어에게 물건을 전달
-                    for (int i = 0; i < questDetail.requestItemObjs.Length; i++)
-                    {
-                        playerManager.Inventory.AddItem(questDetail.requestItemObjs[i]);
-                    }
                 }
                 else
                 {
-                    // 인벤토리에 여유가 없다면
                     // 바로 대화 종료
                     FinishTalk();
-                    GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
                     return;
                 }
 
@@ -196,22 +188,20 @@ public class StoryManager : MonoBehaviour
             }
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
-                // 필요한 인벤토리 수 계산
-                int requiredSlotCnt = Mathf.Abs(questDetail.rewardItemObjs.Length - questDetail.requestItemObjs.Length);
+                List<ItemCountInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.rewardItemObjs);
 
-                // 플레이어의 인벤토리의 빈 칸이 충분한지 체크
-                if (playerManager.Inventory.CheckInventorySlots(requiredSlotCnt))
+                // 인벤토리 공간 확인
+                if (playerManager.Inventory.CheckInventorySlots(compressedItemList.Count - questDetail.requestItemObjs.Length))
                 {
-                    // 인벤토리에 여유가 있으면
                     // 퀘스트에 따른 하드코딩
                     // 퀘스트가 끝나면 별도로 할 액션 추가하기
                     if (currentQuestNum == 3)
                     {
-                        StartCoroutine(StartQuest3Action(questDetail.requestItemObjs, questDetail.rewardItemObjs));
+                        StartCoroutine(StartQuest3Action(questDetail.requestItemObjs, compressedItemList));
                     }
                     else
                     {
-                        ExchangeItemsWithNPC(questDetail.requestItemObjs, questDetail.rewardItemObjs);
+                        ExchangeItemsWithNPC(questDetail.requestItemObjs, compressedItemList);
                     }
                 }
                 else
@@ -219,7 +209,6 @@ public class StoryManager : MonoBehaviour
                     // 인벤토리에 여유가 없다면
                     // 바로 대화 종료
                     FinishTalk();
-                    GameManager.instance.AddGameLog("인벤토리의 공간이 충분하지 않습니다.");
                     return;
                 }
 
@@ -239,16 +228,16 @@ public class StoryManager : MonoBehaviour
         }
     }
 
-    IEnumerator StartQuest3Action(GameObject[] _requestItemObjs, GameObject[] _rewardItemObjs)
+    IEnumerator StartQuest3Action(GameObject[] _requestItemObjs, List<ItemCountInfo> _compressedRewardItemList)
     {
         GameManager.instance.ActivateGateBtn();
 
         yield return new WaitForSeconds(3f);
 
-        ExchangeItemsWithNPC(_requestItemObjs, _rewardItemObjs);
+        ExchangeItemsWithNPC(_requestItemObjs, _compressedRewardItemList);
     }
 
-    void ExchangeItemsWithNPC(GameObject[] _requestItemObjs, GameObject[] _rewardItemObjs)
+    void ExchangeItemsWithNPC(GameObject[] _requestItemObjs, List<ItemCountInfo> _compressedRewardItemList)
     {
         // NPC에게 물건을 전달
         for (int i = 0; i < _requestItemObjs.Length; i++)
@@ -257,10 +246,7 @@ public class StoryManager : MonoBehaviour
         }
 
         // NPC로부터 보상을 수령
-        for (int i = 0; i < _rewardItemObjs.Length; i++)
-        {
-            playerManager.Inventory.AddItem(_rewardItemObjs[i]);
-        }
+        playerManager.Inventory.AddItems(_compressedRewardItemList);
     }
 
     QuestNPC FindNPCByName(string _name)
