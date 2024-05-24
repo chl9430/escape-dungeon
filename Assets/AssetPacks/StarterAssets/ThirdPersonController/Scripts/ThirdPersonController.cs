@@ -228,7 +228,7 @@ namespace StarterAssets
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
             // 플레이어 이동(달리기) 제어
-            if (playerManager.IsDamaged || playerManager.IsInteracting || GameManager.instance.IsInputLock())
+            if (GameManager.instance.IsInputLock() || playerManager.IsInteracting)
             {
                 targetSpeed = 0f;
             }
@@ -280,8 +280,7 @@ namespace StarterAssets
                 // rotate to face input direction relative to camera position
 
                 // 플레이어 회전 제어
-                if (!playerManager.IsAiming && !playerManager.IsDamaged && !playerManager.IsInteracting
-                    && !GameManager.instance.IsInputLock())
+                if (!GameManager.instance.IsInputLock() && !playerManager.IsAiming && !playerManager.IsInteracting)
                 {
                     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 }
@@ -305,8 +304,7 @@ namespace StarterAssets
         private void JumpAndGravity()
         {
             // 플레이어 점프 제어
-            if (playerManager.IsDamaged || playerManager.IsInteracting
-                || GameManager.instance.IsInputLock())
+            if (GameManager.instance.IsInputLock() || playerManager.IsInteracting)
             {
                 _input.jump = false;
             }

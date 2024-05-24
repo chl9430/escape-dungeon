@@ -221,7 +221,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &9648414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -468,7 +467,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &37159770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1038,6 +1036,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1662515199}
     - target: {fileID: 8858472543934114984, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
+      propertyPath: damagedEffect
+      value: 
+      objectReference: {fileID: 840028630}
+    - target: {fileID: 8858472543934114984, guid: a32b89e71fbd51d4d9b3d270682a75ce, type: 3}
       propertyPath: damagedEffectObj
       value: 
       objectReference: {fileID: 840028629}
@@ -1239,7 +1241,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &185927452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1471,7 +1472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &220714886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2287,7 +2287,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &305246695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3404,7 +3403,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &436255098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4690,7 +4688,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &679876760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5126,7 +5123,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &778989303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5364,7 +5360,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &791722749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5905,7 +5900,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &907459984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7021,7 +7015,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &1051679003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7876,7 +7869,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &1248889597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9512,10 +9504,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items:
-  - {fileID: -3419225064576493262, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
-  - {fileID: -3419225064576493262, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
-  - {fileID: 7438199012483751499, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
-  - {fileID: 7438199012483751499, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
+  - {fileID: 5483095858081367866, guid: 08a5d2ffc145a4f40b5a92df8a771de5, type: 3}
+  - {fileID: 5483095858081367866, guid: ec8d61d9471a89c41b4ec71c65247194, type: 3}
+  - {fileID: 5483095858081367866, guid: f42cc899c1b7acc4c9255a9c5bf05a88, type: 3}
   slotParent: {fileID: 930820083}
   slots: []
   selectedItemSlot: {fileID: 665384032}
@@ -11487,7 +11479,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &2131760633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11699,7 +11690,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!114 &2145688232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12167,7 +12157,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 0}
-  emptyImgSprite: {fileID: 21300000, guid: 4f033cdd2b09f9a43b139729d09d002c, type: 3}
 --- !u!222 &4622059807352496757
 CanvasRenderer:
   m_ObjectHideFlags: 0

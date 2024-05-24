@@ -9,11 +9,9 @@ public class PlayerManager : MonoBehaviour
 {
     [Header("HP")]
     [SerializeField] GameObject HPBarObj;
-    [SerializeField] GameObject damagedEffectObj;
+    [SerializeField] PostProcessVolume damagedEffect;
     float currentHP;
     float maxHP;
-    bool isDamaged;
-    bool isInvincible;
 
     [Header("Inventory")]
     [SerializeField] Inventory inventory;
@@ -36,9 +34,6 @@ public class PlayerManager : MonoBehaviour
     public bool IsInventory { get { return isInventory; } }
     public bool IsTalking { get { return isTalking; } set { isTalking = value; } }
     public bool IsAiming { get { return isAiming; } set { isAiming = value; } }
-    public bool IsReloading { get { return isReloading; } }
-    public bool IsInvincible { get { return isInvincible; } }
-    public bool IsDamaged { get { return isDamaged; } }
 
     public bool IsInteracting { get { return isInteracting; } }
 
@@ -60,6 +55,11 @@ public class PlayerManager : MonoBehaviour
         maxHP = 100;
     }
 
+    void Start()
+    {
+        RefreshHP();
+    }
+
     void Update()
     {
         Talk();
@@ -71,49 +71,20 @@ public class PlayerManager : MonoBehaviour
         AimCheck();
 
         ActivateTool();
-
-        HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
     }
 
-    void ActivateTool()
+    // 플레이어의 HP와 관련된 함수
+    IEnumerator ShowDamagedEffect()
     {
-        // 물체와 상호작용 버튼을 눌렀을 때
-        if (input.interact && !isInventory && !isTalking
-            && !isDamaged && !isReloading && !isInteracting
-            && !GameManager.instance.IsWatching)
-        {
-            input.interact = false;
-
-            if (scanedToolObj != null)
-            {
-                isInteracting = true;
-
-                scanedToolObj.GetComponent<Tool>().InteractObject();
-            }
-
-            // Tool마다 상호작용이 끝나는 시간이 다를 수 있기 때문에
-            // 나중에는 Tool쪽에서 isInteracting을 거짓으로 만들어 줄 수도 있다.
-            isInteracting = false;
-        }
-    }
-
-    // 데미지 애니메이션 마지막에 호출
-    public void UnsetIsDamaged()
-    {
-        isDamaged = false;
-    }
-
-    IEnumerator SetInvincibleState()
-    {
-        isInvincible = true;
-        isDamaged = true;
-        damagedEffectObj.GetComponent<PostProcessVolume>().weight = 1;
-        anim.SetTrigger("Damage");
+        damagedEffect.weight = 1;
 
         yield return new WaitForSeconds(3f);
 
-        damagedEffectObj.GetComponent<PostProcessVolume>().weight = 0;
-        isInvincible = false;
+        damagedEffect.weight = 0;
+    }
+    void RefreshHP()
+    {
+        HPBarObj.GetComponent<Slider>().value = currentHP / maxHP;
     }
 
     public void RestoreHP(int _value)
@@ -124,12 +95,13 @@ public class PlayerManager : MonoBehaviour
         {
             currentHP = maxHP;
         }
+
+        RefreshHP();
     }
 
     public void GetDamaged(float _damage, Vector3 _monPos)
     {
-        if (!isInvincible && !isTalking &&
-            !GameManager.instance.IsWatching && !GameManager.instance.IsClear && !GameManager.instance.IsDead)
+        if (!GameManager.instance.IsWatching && !GameManager.instance.IsClear && !GameManager.instance.IsDead && !isTalking)
         {
             // 재장전 상태라면
             if (isReloading)
@@ -139,23 +111,24 @@ public class PlayerManager : MonoBehaviour
                 isReloading = false;
             }
 
+            // currentHP -= _damage;
+            RefreshHP();
+
             // 남은 체력이 충분하다면
             if (currentHP > _damage)
             {
-                StartCoroutine(SetInvincibleState());
-                transform.LookAt(new Vector3(_monPos.x, transform.position.y, _monPos.z));
-                // currentHP -= _damage;
+                StartCoroutine(ShowDamagedEffect());
             }
             else // 남은 체력이 충분하지 않다면
             {
                 anim.SetTrigger("Dead");
-                currentHP -= _damage;
                 GetComponent<PlayerInput>().enabled = false;
                 GameManager.instance.SetGameOverUI();
             }
         }
     }
 
+    // 플레이어의 조작과 관련된 함수
     void ShowQuestBox()
     {
         if (!GameManager.instance.IsInputLock() && input.showQuest)
@@ -203,22 +176,7 @@ public class PlayerManager : MonoBehaviour
         {
             input.talk = false;
 
-            if (!isTalking)
-            {
-                if (!isInteracting && !GameManager.instance.IsInputLock())
-                {
-                    if (scanedQuestNPC != null)
-                    {
-                        if (scanedQuestNPC.QuestState != QuestState.NONE)
-                        {
-                            isTalking = true;
-                            GameManager.instance.ClearGameLogInTheList();
-                            StoryManager.instance.Talk(scanedQuestNPC);
-                        }
-                    }
-                }
-            }
-            else
+            if (!GameManager.instance.IsInputLock() && !isInteracting)
             {
                 if (scanedQuestNPC != null)
                 {
@@ -230,6 +188,10 @@ public class PlayerManager : MonoBehaviour
                     }
                 }
             }
+            else
+            {
+                StoryManager.instance.Talk(scanedQuestNPC);
+            }
         }
     }
 
@@ -240,7 +202,7 @@ public class PlayerManager : MonoBehaviour
         {
             input.reload = false;
 
-            if (!GameManager.instance.IsInputLock())
+            if (!GameManager.instance.IsInputLock() && !isReloading)
             {
                 // 재장전 상태라면 조준을 할 수 없게 한다.
                 if (isReloading)
@@ -256,55 +218,82 @@ public class PlayerManager : MonoBehaviour
                 isReloading = true;
                 return;
             }
+            // 재장전 상태라면 조준을 할 수 없게 한다.
         }
 
         // 등록된 aim 버튼을 눌렀을 때
-        if (input.aim)
+        if (!isReloading)
         {
-            isAiming = true;
-
-            if (!GameManager.instance.IsInputLock())
+            if (input.aim)
             {
-                // 에임 카메라로 전환
-                pistol.SetAim(true);
+                isAiming = true;
 
-                anim.SetLayerWeight(1, 1);
-
-                Vector3 targetAim = pistol.GetTargetPos();
-                targetAim.y = transform.position.y;
-                Vector3 aimDir = (targetAim - transform.position).normalized;
-
-                // 플레이어의 전방을 항상 타겟으로 고정시킨다.
-                transform.forward = Vector3.Lerp(
-                    transform.forward, aimDir, Time.deltaTime * 50f
-                );
-
-                // 등록된 shoot 버튼을 눌렀을 때
-                if (input.shoot)
+                if (!GameManager.instance.IsInputLock() && !isReloading)
                 {
-                    if (pistol.Shoot(targetAim))
+                    // 에임 카메라로 전환
+                    pistol.SetAim(true);
+
+                    anim.SetLayerWeight(1, 1);
+
+                    Vector3 targetAim = pistol.GetTargetPos();
+                    targetAim.y = transform.position.y;
+                    Vector3 aimDir = (targetAim - transform.position).normalized;
+
+                    // 플레이어의 전방을 항상 타겟으로 고정시킨다.
+                    transform.forward = Vector3.Lerp(
+                        transform.forward, aimDir, Time.deltaTime * 50f
+                    );
+
+                    // 등록된 shoot 버튼을 눌렀을 때
+                    if (input.shoot)
                     {
-                        anim.SetBool("Shoot", true);
+                        if (pistol.Shoot(targetAim))
+                        {
+                            anim.SetBool("Shoot", true);
+                        }
+                        else
+                        {
+                            anim.SetBool("Shoot", false);
+                        }
                     }
                     else
                     {
                         anim.SetBool("Shoot", false);
+
+                        pistol.ResetShootDelay();
                     }
                 }
-                else
-                {
-                    anim.SetBool("Shoot", false);
-
-                    pistol.ResetShootDelay();
-                }
+            }
+            else
+            {
+                pistol.SetAim(false);
+                isAiming = false;
+                anim.SetLayerWeight(1, 0);
+                anim.SetBool("Shoot", false);
             }
         }
-        else
+    }
+
+    void ActivateTool()
+    {
+        // 물체와 상호작용 버튼을 눌렀을 때
+        if (input.interact)
         {
-            pistol.SetAim(false);
-            isAiming = false;
-            anim.SetLayerWeight(1, 0);
-            anim.SetBool("Shoot", false);
+            input.interact = false;
+
+            if (!GameManager.instance.IsInputLock() && !isInteracting && isReloading)
+            {
+                if (scanedToolObj != null)
+                {
+                    isInteracting = true;
+
+                    scanedToolObj.GetComponent<Tool>().InteractObject();
+                }
+
+                // Tool마다 상호작용이 끝나는 시간이 다를 수 있기 때문에
+                // 나중에는 Tool쪽에서 isInteracting을 거짓으로 만들어 줄 수도 있다.
+                isInteracting = false;
+            }
         }
     }
 
