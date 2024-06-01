@@ -130,7 +130,7 @@ public class StoryManager : MonoBehaviour
             }
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
-                List<ItemCountInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.requestItemObjs);
+                List<ItemInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.requestItemObjs);
 
                 // 인벤토리에 여유가 있으면
                 if (playerManager.Inventory.CheckInventorySlots(compressedItemList.Count))
@@ -188,7 +188,7 @@ public class StoryManager : MonoBehaviour
             }
             else if (currentTalkIdx == talkDetail.talks.Length) // 마지막 대사까지 성공적으로 읽었다면
             {
-                List<ItemCountInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.rewardItemObjs);
+                List<ItemInfo> compressedItemList = playerManager.Inventory.MakeCompressedItemCntList(questDetail.rewardItemObjs);
 
                 // 인벤토리 공간 확인
                 if (playerManager.Inventory.CheckInventorySlots(compressedItemList.Count - questDetail.requestItemObjs.Length))
@@ -228,7 +228,7 @@ public class StoryManager : MonoBehaviour
         }
     }
 
-    IEnumerator StartQuest3Action(GameObject[] _requestItemObjs, List<ItemCountInfo> _compressedRewardItemList)
+    IEnumerator StartQuest3Action(GameObject[] _requestItemObjs, List<ItemInfo> _compressedRewardItemList)
     {
         GameManager.instance.ActivateGateBtn();
 
@@ -237,7 +237,7 @@ public class StoryManager : MonoBehaviour
         ExchangeItemsWithNPC(_requestItemObjs, _compressedRewardItemList);
     }
 
-    void ExchangeItemsWithNPC(GameObject[] _requestItemObjs, List<ItemCountInfo> _compressedRewardItemList)
+    void ExchangeItemsWithNPC(GameObject[] _requestItemObjs, List<ItemInfo> _compressedRewardItemList)
     {
         // NPC에게 물건을 전달
         for (int i = 0; i < _requestItemObjs.Length; i++)

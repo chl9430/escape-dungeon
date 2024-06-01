@@ -9,12 +9,12 @@ public class ItemBox : Tool
     Animator anim;
     Inventory inventory;
 
-    List<ItemCountInfo> compressedItemList;
+    List<ItemInfo> compressedItemList;
 
     void Awake()
     {
         anim = GetComponent<Animator>();
-        compressedItemList = new List<ItemCountInfo>();
+        compressedItemList = new List<ItemInfo>();
     }
 
     void Start()

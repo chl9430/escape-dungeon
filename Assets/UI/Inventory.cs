@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public struct ItemCountInfo
+public struct ItemInfo
 {
     public Item item;
     public int count;
@@ -13,29 +13,33 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] GameObject[] items;
 
+    [SerializeField] GameObject itemOmgObj;
     [SerializeField] Transform slotParent;
-    [SerializeField] Slot[] slots;
+    [SerializeField] List<GameObject> slotObjs;
     [SerializeField] Image selectedItemSlot;
     [SerializeField] Text selectedItemDescription;
     [SerializeField] Button useBtn;
 
     GameObject playerObj;
-    Sprite emptyImageSprite;
     int remainedSlotCnt;
 
     void Start()
     {
         playerObj = FindObjectOfType<PlayerManager>().gameObject;
-        slots = slotParent.GetComponentsInChildren<Slot>();
-        remainedSlotCnt = slots.Length;
-        emptyImageSprite = selectedItemSlot.sprite;
+        for (int i = 0; i < slotParent.transform.childCount; i++)
+        {
+            GameObject child = slotParent.GetChild(i).gameObject;
+
+            slotObjs.Add(child);
+        }
+        remainedSlotCnt = slotObjs.Count;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            List<ItemCountInfo> compressedItemList = MakeCompressedItemCntList(items);
+            List<ItemInfo> compressedItemList = MakeCompressedItemCntList(items);
 
             if (CheckInventorySlots(compressedItemList.Count))
             {
@@ -46,21 +50,26 @@ public class Inventory : MonoBehaviour
 
     void ResetSelectedItemSlot()
     {
-        selectedItemSlot.sprite = emptyImageSprite;
+        selectedItemSlot.sprite = null;
+
+        Color color = selectedItemSlot.color;
+        color.a = 0f;
+        selectedItemSlot.color = color;
+
         selectedItemDescription.text = "";
         useBtn.onClick.RemoveAllListeners();
     }
 
-    public List<ItemCountInfo> MakeCompressedItemCntList(GameObject[] _itemObjs)
+    public List<ItemInfo> MakeCompressedItemCntList(GameObject[] _itemObjs)
     {
-        List<ItemCountInfo> compressedItemCntList = new();
+        List<ItemInfo> compressedItemCntList = new();
 
         for (int i = 0; i < _itemObjs.Length; i++)
         {
             Item item = _itemObjs[i].GetComponent<Item>();
             int existingItemIdx = compressedItemCntList.FindIndex(itemInfo => itemInfo.item.GetItemName() == item.GetItemName());
 
-            ItemCountInfo newItemInfo;
+            ItemInfo newItemInfo;
 
             if (existingItemIdx == -1 || compressedItemCntList[existingItemIdx].count == 50)
             {
@@ -81,22 +90,50 @@ public class Inventory : MonoBehaviour
         return compressedItemCntList;
     }
 
-    public bool AddItems(List<ItemCountInfo> _compressedItemList)
+    public void AddItem(ItemInfo _itemInfo)
+    {
+        for (int i = 0; i < slotObjs.Count; i++)
+        {
+            if (slotObjs[i].transform.childCount == 0)
+            {
+                InventoryItem instIvenItem = Instantiate(itemOmgObj).GetComponent<InventoryItem>();
+                instIvenItem.transform.SetParent(slotObjs[i].transform, false);
+
+                instIvenItem.SetItem(_itemInfo);
+
+                GameManager.instance.AddGameLog(
+                    _itemInfo.item.GetItemName() +
+                    "을(를) " +
+                    _itemInfo.count +
+                    "개 획득하였습니다."
+                );
+
+                remainedSlotCnt--;
+                break;
+            }
+        }
+    }
+
+    public bool AddItems(List<ItemInfo> _compressedItemList)
     {
         for (int i = 0; i < _compressedItemList.Count; i++)
         {
-            for (int j = 0; j < slots.Length; j++)
+            for (int j = 0; j < slotObjs.Count; j++)
             {
-                if (slots[j].Item == null)
+                if (slotObjs[j].transform.childCount == 0)
                 {
-                    slots[j].SetItem(_compressedItemList[i]);
+                    InventoryItem instIvenItem = Instantiate(itemOmgObj).GetComponent<InventoryItem>();
+                    instIvenItem.transform.SetParent(slotObjs[j].transform, false);
+
+                    instIvenItem.SetItem(_compressedItemList[i]);
+
                     GameManager.instance.AddGameLog(
                         _compressedItemList[i].item.GetItemName() +
                         "을(를) " +
                         _compressedItemList[i].count +
                         "개 획득하였습니다."
                     );
-                    slots[j].GetComponent<Button>().onClick.AddListener(slots[j].SelectItem);
+
                     remainedSlotCnt--;
                     break;
                 }
@@ -120,38 +157,42 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void SetSelectedItem(Slot _selectedSlot)
+    public void SetSelectedItem(InventoryItem _selectedItem)
     {
-        Item selectedItem = _selectedSlot.Item;
+        selectedItemSlot.sprite = _selectedItem.GetItemImage();
 
-        selectedItemSlot.sprite = _selectedSlot.GetComponent<Image>().sprite;
-        selectedItemDescription.text = selectedItem.GetItemName() + " : " + selectedItem.GetItemDescription();
+        Color selectedItemSlotColor = selectedItemSlot.color;
+        selectedItemSlotColor.a = 255;
+        selectedItemSlot.color = selectedItemSlotColor;
+
+        selectedItemDescription.text = _selectedItem.Item.GetItemName() + " : " + _selectedItem.Item.GetItemDescription();
 
         // 이미 등록된 콜백함수가 있으면 삭제
         useBtn.onClick.RemoveAllListeners();
 
         // 선택된 아이템을 누르면 호출될 콜백함수
         useBtn.onClick.AddListener(() => {
-            UseItem(_selectedSlot);
+            UseItem(_selectedItem);
 
             // 현재 선택된 객체를 null로 설정하여 포커스 해제
             EventSystem.current.SetSelectedGameObject(null);
         });
     }
 
-    void UseItem(Slot _slot)
+    void UseItem(InventoryItem _selectedItem)
     {
-        Item usedItem = _slot.Item;
+        Item usedItem = _selectedItem.Item;
 
         usedItem.Use(playerObj);
 
         // 사용할 수 있는 아이템만 사용처리한다.
         if (usedItem.IsUsable())
         {
-            _slot.UseItem();
+            _selectedItem.UseItem();
 
-            if (_slot.ItemCount == 0)
+            if (_selectedItem.GetItemCount() == 0)
             {
+                Destroy(_selectedItem.gameObject);
                 ResetSelectedItemSlot();
                 remainedSlotCnt++;
             }
@@ -160,14 +201,19 @@ public class Inventory : MonoBehaviour
 
     public void PassItemToNPC(GameObject _requestItemObj)
     {
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < slotObjs.Count; i++)
         {
-            string itemName = slots[i].Item.GetComponent<Item>().GetItemName();
-            if (itemName == _requestItemObj.GetComponent<Item>().GetItemName())
+            if (slotObjs[i].transform.childCount != 0)
             {
-                slots[i].UseItem();
-                remainedSlotCnt++;
-                return;
+                InventoryItem invenItem = slotObjs[i].transform.GetChild(0).GetComponent<InventoryItem>();
+                string itemName = invenItem.Item.GetComponent<Item>().GetItemName();
+
+                if (itemName == _requestItemObj.GetComponent<Item>().GetItemName())
+                {
+                    invenItem.UseItem();
+                    remainedSlotCnt++;
+                    return;
+                }
             }
         }
     }

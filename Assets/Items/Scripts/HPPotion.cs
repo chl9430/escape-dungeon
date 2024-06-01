@@ -10,6 +10,11 @@ public class HPPotion : Item
     {
         itemName = "HP Potion";
         itemDescription = "플레이어의 HP를 " + restoreHPValue + "만큼 회복시킵니다.";
+        itemInfo = new ItemInfo
+        {
+            item = this,
+            count = count
+        };
     }
 
     public override void Use(GameObject _playerObj)
