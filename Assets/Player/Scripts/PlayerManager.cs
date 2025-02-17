@@ -111,7 +111,7 @@ public class PlayerManager : MonoBehaviour
                 isReloading = false;
             }
 
-            // currentHP -= _damage;
+            currentHP -= _damage;
             RefreshHP();
 
             // 남은 체력이 충분하다면

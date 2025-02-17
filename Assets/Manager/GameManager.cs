@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
 
         // 쉬운 모드
         // 몬스터 스폰(몬스터 5마리)
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 2; i++)
         {
             MonSpawnInRandomPos();
         }
